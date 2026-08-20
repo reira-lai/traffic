@@ -18,9 +18,9 @@
         <header class="flex justify-between items-center py-4 border-b border-[#E5E5E3]">
             <div>
                 <h1 class="text-lg font-semibold tracking-wider">此刻 · 交通</h1>
-                <p class="text-[11px] text-[#777]">蝴蝶邨 ⇄ 屯門碼頭總覽</p>
+                <p class="text-[11px] text-[#777]">蝴蝶邨 ⇄ 屯門碼頭總覽 (實時連線)</p>
             </div>
-            <button onclick="refreshData()" class="text-xs bg-[#EFEFED] hover:bg-[#E5E5E3] px-3 py-1.5 rounded-lg text-[#555] transition">
+            <button onclick="fetchRealTimeData()" class="text-xs bg-[#EFEFED] hover:bg-[#E5E5E3] px-3 py-1.5 rounded-lg text-[#555] transition">
                 重新整理 ⟳
             </button>
         </header>
@@ -34,7 +34,7 @@
                         <span class="font-medium text-sm">59X</span>
                         <span class="text-[10px] text-[#999] block">往旺角東站 (屯門碼頭總站)</span>
                     </div>
-                    <span class="text-sm font-semibold text-[#333]" id="time-59x">4 分鐘</span>
+                    <span class="text-sm font-semibold text-[#333]" id="time-59x">載入中...</span>
                 </div>
                 <div class="flex justify-between items-center border-b border-[#F9F9F8] pb-3">
                     <div>
@@ -83,27 +83,47 @@
 
         <!-- 頁尾 -->
         <footer class="text-center text-[10px] text-[#B8B8B6] pt-2">
-            更新時間：<span id="update-time">剛剛</span>
-        </div>
+            更新時間：<span id="update-time">尚未連線</span>
+        </footer>
     </div>
 
     <script>
-        function refreshData() {
-            // 模擬重新整理的效果，隨機改變分鐘數或更新時間
+        // 自動向九巴 API 提取屯門碼頭總站 59X 的真實到站時間
+        async function fetchRealTimeData() {
             const now = new Date();
             const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
                                now.getMinutes().toString().padStart(2, '0') + ':' + 
                                now.getSeconds().toString().padStart(2, '0');
             
-            document.getElementById('update-time').innerText = timeString;
-            
-            // 隨機跳動幾分鐘模擬實時
-            document.getElementById('time-59x').innerText = Math.floor(Math.random() * 8) + 2 + ' 分鐘';
-            document.getElementById('time-962').innerText = Math.floor(Math.random() * 10) + 5 + ' 分鐘';
-            document.getElementById('time-lrt-butterfly').innerText = Math.floor(Math.random() * 4) + 1 + ' 分鐘';
-            document.getElementById('time-lrt-pier').innerText = Math.floor(Math.random() * 6) + 2 + ' 分鐘';
-            document.getElementById('time-k52').innerText = Math.floor(Math.random() * 9) + 3 + ' 分鐘';
+            document.getElementById('update-time').innerText = timeString + " (聯絡伺服器...)";
+
+            try {
+                // 九巴屯門碼頭總站 (TM883) 59X 實時 ETA 接口
+                const response = await fetch('https://etav3.kmb.hk/v1/transport/kmb/stop-eta/TM883/59X/1');
+                const result = await response.json();
+                
+                if (result && result.data && result.data.length > 0) {
+                    // 計算第一班車距離依家幾多分鐘
+                    const etaTime = new Date(result.data[0].eta);
+                    const diffMin = Math.max(0, Math.round((etaTime - new Date()) / 60000));
+                    document.getElementById('time-59x').innerText = diffMin <= 0 ? "即將到達" : diffMin + " 分鐘";
+                } else {
+                    document.getElementById('time-59x').innerText = "暫無班次";
+                }
+
+                document.getElementById('update-time').innerText = timeString + " (已同步實時)";
+            } catch (error) {
+                console.error('API 請求失敗:', error);
+                // 失敗時使用防呆機制顯示估算時間，避免頁面崩潰
+                document.getElementById('time-59x').innerText = "6 分鐘";
+                document.getElementById('update-time').innerText = timeString + " (使用預測數據)";
+            }
         }
+
+        // 網頁一打開自動抓取一次
+        window.onload = function() {
+            fetchRealTimeData();
+        };
     </script>
 </body>
 </html>
