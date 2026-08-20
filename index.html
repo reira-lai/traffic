@@ -18,7 +18,7 @@
         <header class="py-4 border-b border-[#E5E5E3] flex justify-between items-end">
             <div>
                 <h1 class="text-lg font-semibold tracking-wider">此刻 · 交通</h1>
-                <p class="text-[11px] text-[#777] mt-0.5">更新時間：<span id="update-time">載入中...</span></p>
+                <p class="text-[11px] text-[#777] mt-1">更新時間：<span id="update-time">載入中...</span></p>
             </div>
             <button onclick="fetchAllData()" class="text-xs bg-[#EFEFED] hover:bg-[#E5E5E3] px-3 py-1.5 rounded-lg text-[#555] transition">
                 重新整理 ⟳
@@ -27,25 +27,25 @@
 
         <!-- 區塊：九巴 (KMB) 實時班次 -->
         <section>
-            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">九巴 (KMB) 實時班次</h2>
+            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">九巴 (KMB) 屯門碼頭總站</h2>
             <div class="bg-white border border-[#E5E5E3] rounded-xl p-4 shadow-sm space-y-4">
                 
                 <!-- 59X -->
                 <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-medium text-sm">59X <span class="text-[10px] text-[#999]">屯門碼頭總站</span></span>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-medium text-sm">59X <span class="text-[10px] text-[#999]">往旺角東站</span></span>
                     </div>
-                    <div id="eta-59x" class="text-xs text-[#666] flex gap-2">
+                    <div id="eta-59x" class="text-xs text-[#666] flex gap-2 flex-wrap">
                         <span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span>
                     </div>
                 </div>
 
                 <!-- K52 -->
                 <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-medium text-sm">K52 <span class="text-[10px] text-[#999]">屯門碼頭總站</span></span>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-medium text-sm">K52 <span class="text-[10px] text-[#999]">往屯門站</span></span>
                     </div>
-                    <div id="eta-k52" class="text-xs text-[#666] flex gap-2">
+                    <div id="eta-k52" class="text-xs text-[#666] flex gap-2 flex-wrap">
                         <span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span>
                     </div>
                 </div>
@@ -53,28 +53,18 @@
             </div>
         </section>
 
-        <!-- 區塊：城巴 (CTB) 及 港鐵 (MTR) 提示 -->
+        <!-- 區塊：城巴 (CTB) -->
         <section>
-            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">其他路線與輕鐵</h2>
+            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">城巴 (CTB)</h2>
             <div class="bg-white border border-[#E5E5E3] rounded-xl p-4 shadow-sm space-y-4">
                 
                 <!-- 962 / 962X -->
-                <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-medium text-sm">962 / 962X <span class="text-[10px] text-[#999]">往港島</span></span>
-                    </div>
-                    <div id="eta-962" class="text-xs text-[#666] flex gap-2">
-                        <span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span>
-                    </div>
-                </div>
-
-                <!-- 輕鐵 -->
                 <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-medium text-sm">輕鐵 (蝴蝶站 / 碼頭)</span>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-medium text-sm">962 / 962X <span class="text-[10px] text-[#999]">往銅鑼灣 / 中環</span></span>
                     </div>
-                    <div class="text-xs text-[#888] bg-[#F9F9F8] p-2 rounded">
-                        MTR 輕鐵暫未開放直接前端 API，請留意站內顯示屏
+                    <div id="eta-962" class="text-xs text-[#666] flex gap-2 flex-wrap">
+                        <span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span>
                     </div>
                 </div>
 
@@ -96,7 +86,7 @@
             return mins <= 0 ? '即將到達' : mins + ' 分鐘';
         }
 
-        // 渲染 ETA 標籤到畫面上
+        // 渲染班次到介面
         function renderEtas(elementId, etaList) {
             const container = document.getElementById(elementId);
             container.innerHTML = '';
@@ -106,9 +96,8 @@
                 return;
             }
 
-            // 取最多前 3 個班次
-            const top3 = etaList.slice(0, 3);
-            top3.forEach(item => {
+            // 取最近 3 個班次
+            etaList.slice(0, 3).forEach(item => {
                 const timeText = getMinutes(item.eta);
                 const span = document.createElement('span');
                 span.className = 'bg-[#F2F2F0] px-2.5 py-1 rounded text-stone-700 font-medium';
@@ -117,39 +106,38 @@
             });
         }
 
-        // 抓取九巴數據
-        async function fetchKMB(route, stopId, elementId) {
+        // 抓取九巴數據 (TM883 屯門碼頭總站)
+        async function fetchKMB(route, elementId) {
             try {
-                const response = await fetch(`https://etav3.kmb.hk/v1/transport/kmb/stop-eta/${stopId}/${route}/1`);
+                const response = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/TM883');
                 if (!response.ok) throw new Error('API Error');
                 const result = await response.json();
                 
-                // 過濾出該路線的班次
-                const etas = result.data ? result.data.filter(item => item.route === route) : [];
-                renderEtas(elementId, etas);
+                // 過濾出指定路線
+                const filtered = result.data ? result.data.filter(item => item.route === route) : [];
+                renderEtas(elementId, filtered);
             } catch (error) {
                 console.error(`Error fetching ${route}:`, error);
-                document.getElementById(elementId).innerHTML = '<span class="text-red-500 bg-red-50 px-2 py-1 rounded">[Error] 無法取得數據</span>';
+                document.getElementById(elementId).innerHTML = '<span class="text-red-500 bg-red-50 px-2 py-1 rounded text-[11px]">[Error] 無法取得數據</span>';
             }
         }
 
-        // 抓取城巴數據 (962 示範)
+        // 抓取城巴數據
         async function fetchCitybus(route, stopId, elementId) {
             try {
-                // 城巴 API 範例端點
                 const response = await fetch(`https://rt.data.gov.hk/v1/transport/citybus/eta/ctb/${stopId}/${route}`);
                 if (!response.ok) throw new Error('API Error');
                 const result = await response.json();
                 
-                const etas = result.data ? result.data.map(item => ({ eta: item.eta })) : [];
+                const etas = result.data ? result.data : [];
                 renderEtas(elementId, etas);
             } catch (error) {
                 console.error(`Error fetching ${route}:`, error);
-                document.getElementById(elementId).innerHTML = '<span class="text-red-500 bg-red-50 px-2 py-1 rounded">[Error] 無法取得數據</span>';
+                document.getElementById(elementId).innerHTML = '<span class="text-red-500 bg-red-50 px-2 py-1 rounded text-[11px]">[Error] 無法取得數據</span>';
             }
         }
 
-        // 總控：抓取所有路線
+        // 總控：自動抓取
         async function fetchAllData() {
             const now = new Date();
             const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
@@ -158,18 +146,16 @@
             
             document.getElementById('update-time').innerText = timeString + " (更新中...)";
 
-            // 屯門碼頭總站代號：九巴 TM883 等，如遇官方代號變更會顯示 Error
             await Promise.all([
-                fetchKMB('59X', 'TM883', 'eta-59x'),
-                fetchKMB('K52', 'TM883', 'eta-k52'),
-                // 962 港島方向站點作示範
-                fetchCitybus('962', '002778', 'eta-962') 
+                fetchKMB('59X', 'eta-59x'),
+                fetchKMB('K52', 'eta-k52'),
+                fetchCitybus('962', '002778', 'eta-962') // 示範城巴站點
             ]);
 
             document.getElementById('update-time').innerText = timeString;
         }
 
-        // 網頁開啟時自動抓取
+        // 網頁載入時自動執行
         window.onload = function() {
             fetchAllData();
         };
