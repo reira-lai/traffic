@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蝴蝶邨・屯門碼頭交通時間</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap');
+        body { font-family: 'Noto Serif TC', serif; }
+    </style>
+</head>
+<body class="bg-[#FBFBFA] text-[#222222] min-h-screen p-4 flex flex-col items-center">
+
+    <div class="w-full max-w-md space-y-6 pb-8">
+        
+        <!-- 標題與重新整理按鈕 -->
+        <header class="flex justify-between items-center py-4 border-b border-[#E5E5E3]">
+            <div>
+                <h1 class="text-lg font-semibold tracking-wider">此刻 · 交通</h1>
+                <p class="text-[11px] text-[#777]">蝴蝶邨 ⇄ 屯門碼頭總覽</p>
+            </div>
+            <button onclick="refreshData()" class="text-xs bg-[#EFEFED] hover:bg-[#E5E5E3] px-3 py-1.5 rounded-lg text-[#555] transition">
+                重新整理 ⟳
+            </button>
+        </header>
+
+        <!-- 區塊：往市區 / 九龍 / 港島方向 -->
+        <section>
+            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">往市區方向 (九龍 / 港島)</h2>
+            <div class="bg-white border border-[#E5E5E3] rounded-xl p-4 shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b border-[#F9F9F8] pb-3">
+                    <div>
+                        <span class="font-medium text-sm">59X</span>
+                        <span class="text-[10px] text-[#999] block">往旺角東站 (屯門碼頭總站)</span>
+                    </div>
+                    <span class="text-sm font-semibold text-[#333]" id="time-59x">4 分鐘</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-[#F9F9F8] pb-3">
+                    <div>
+                        <span class="font-medium text-sm">962 / 962X</span>
+                        <span class="text-[10px] text-[#999] block">往銅鑼灣 / 中環</span>
+                    </div>
+                    <span class="text-sm font-semibold text-[#333]" id="time-962">10 分鐘</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="font-medium text-sm">A33 / E33</span>
+                        <span class="text-[10px] text-[#999] block">往機場 / 東涌</span>
+                    </div>
+                    <span class="text-sm font-semibold text-[#333]" id="time-airport">15 分鐘</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 區塊：區內 / 輕鐵及接駁方向 -->
+        <section>
+            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">區內 / 輕鐵樞紐</h2>
+            <div class="bg-white border border-[#E5E5E3] rounded-xl p-4 shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b border-[#F9F9F8] pb-3">
+                    <div>
+                        <span class="font-medium text-sm">輕鐵 507 / 610</span>
+                        <span class="text-[10px] text-[#999] block">蝴蝶站 (往兆康/元朗方向)</span>
+                    </div>
+                    <span class="text-sm font-semibold text-[#333]" id="time-lrt-butterfly">2 分鐘</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-[#F9F9F8] pb-3">
+                    <div>
+                        <span class="font-medium text-sm">輕鐵 507 / 615 / 615P</span>
+                        <span class="text-[10px] text-[#999] block">屯門碼頭總站</span>
+                    </div>
+                    <span class="text-sm font-semibold text-[#333]" id="time-lrt-pier">5 分鐘</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="font-medium text-sm">K52 / K52A</span>
+                        <span class="text-[10px] text-[#999] block">屯門碼頭總站 (往屯門站)</span>
+                    </div>
+                    <span class="text-sm font-semibold text-[#333]" id="time-k52">7 分鐘</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 頁尾 -->
+        <footer class="text-center text-[10px] text-[#B8B8B6] pt-2">
+            更新時間：<span id="update-time">剛剛</span>
+        </div>
+    </div>
+
+    <script>
+        function refreshData() {
+            // 模擬重新整理的效果，隨機改變分鐘數或更新時間
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                               now.getMinutes().toString().padStart(2, '0') + ':' + 
+                               now.getSeconds().toString().padStart(2, '0');
+            
+            document.getElementById('update-time').innerText = timeString;
+            
+            // 隨機跳動幾分鐘模擬實時
+            document.getElementById('time-59x').innerText = Math.floor(Math.random() * 8) + 2 + ' 分鐘';
+            document.getElementById('time-962').innerText = Math.floor(Math.random() * 10) + 5 + ' 分鐘';
+            document.getElementById('time-lrt-butterfly').innerText = Math.floor(Math.random() * 4) + 1 + ' 分鐘';
+            document.getElementById('time-lrt-pier').innerText = Math.floor(Math.random() * 6) + 2 + ' 分鐘';
+            document.getElementById('time-k52').innerText = Math.floor(Math.random() * 9) + 3 + ' 分鐘';
+        }
+    </script>
+</body>
+</html>
