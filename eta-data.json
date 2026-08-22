@@ -1,145 +1,76 @@
 {
-  "timestamp": "2026-08-22T08:35:57.900722",
-  "bus": {
-    "kmb": {
-      "59X": [
-        {
-          "eta": "2026-08-22T16:40:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-08-22T16:50:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-08-22T17:00:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        }
-      ],
-      "59M": [
-        {
-          "eta": "2026-08-22T16:38:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-08-22T16:46:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-08-22T16:54:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        }
-      ],
-      "59A": [
-        {
-          "eta": null,
-          "remark": {
-            "zh": "服務只限於星期一至五 (公眾假期除外)",
-            "en": "This route only operates on Mondays to Fridays (Except Public Holidays)"
-          },
-          "co": "kmb"
-        }
-      ],
-      "N260": [
-        {
-          "eta": null,
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "kmb"
-        }
-      ],
-      "259B": [
-        {
-          "eta": null,
-          "remark": {
-            "zh": "服務只限於星期一至五 (公眾假期除外)",
-            "en": "This route only operates on Mondays to Fridays (Except Public Holidays)"
-          },
-          "co": "kmb"
-        }
-      ],
-      "59S": []
+  "timestamp": "2026-08-22T09:45:28.244335",
+  "bus_items": [
+    {
+      "company": "kmb",
+      "route": "59X",
+      "stop_id": "TM648",
+      "display_name": "湖景邨湖翠樓",
+      "etas": []
     },
-    "lwb": {
-      "A33": []
+    {
+      "company": "kmb",
+      "route": "59M",
+      "stop_id": "TM671",
+      "display_name": "蝴蝶站",
+      "etas": []
     },
-    "ctb": {
-      "962X": [
-        {
-          "eta": "2026-08-22T16:45:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        },
-        {
-          "eta": "2026-08-22T16:55:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        }
-      ],
-      "962P": [],
-      "B3": [
-        {
-          "eta": "2026-08-22T16:45:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        },
-        {
-          "eta": "2026-08-22T17:00:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        },
-        {
-          "eta": "2026-08-22T17:15:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        }
-      ]
+    {
+      "company": "kmb",
+      "route": "259D",
+      "stop_id": "TM648",
+      "display_name": "湖景邨湖翠樓",
+      "etas": []
     },
-    "mtr": {
-      "K52": [],
-      "506": []
+    {
+      "company": "lwb",
+      "route": "A33",
+      "stop_id": "TM436",
+      "display_name": "兆山苑柳景閣",
+      "etas": []
+    },
+    {
+      "company": "lwb",
+      "route": "E33",
+      "stop_id": "TM436",
+      "display_name": "兆山苑柳景閣",
+      "etas": []
+    },
+    {
+      "company": "lwb",
+      "route": "E33P",
+      "stop_id": "TM436",
+      "display_name": "兆山苑柳景閣",
+      "etas": []
+    },
+    {
+      "company": "lwb",
+      "route": "A34",
+      "stop_id": "TM436",
+      "display_name": "兆山苑柳景閣",
+      "etas": []
+    },
+    {
+      "company": "ctb",
+      "route": "962X",
+      "stop_id": "TM453",
+      "display_name": "湖景邨湖畔樓",
+      "etas": []
+    },
+    {
+      "company": "mtr",
+      "route": "K52",
+      "stop_id": "TM630",
+      "display_name": "蝴蝶邨蝶心樓",
+      "etas": []
+    },
+    {
+      "company": "mtr",
+      "route": "506",
+      "stop_id": "TM630",
+      "display_name": "蝴蝶邨蝶心樓",
+      "etas": []
     }
-  },
-  "lightrail": []
+  ],
+  "lr_items": []
 }
