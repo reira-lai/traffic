@@ -9,30 +9,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
         * { font-family: 'Inter', 'Noto Sans TC', sans-serif; }
         body { background: #f8f8f6; }
-        .card {
-            background: white;
-            border-radius: 1.25rem;
-            padding: 1rem 1.25rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border: 1px solid #f0f0ed;
-        }
-        .eta-badge {
-            background: #f2f2f0;
-            padding: 0.2rem 0.8rem;
-            border-radius: 999px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #1f1f1f;
-            white-space: nowrap;
-        }
-        .tag {
-            display: inline-block;
-            font-size: 0.6rem;
-            font-weight: 700;
-            padding: 0.1rem 0.6rem;
-            border-radius: 999px;
-            letter-spacing: 0.02em;
-        }
+        .card { background: white; border-radius: 1.25rem; padding: 1rem 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f0f0ed; }
+        .eta-badge { background: #f2f2f0; padding: 0.2rem 0.8rem; border-radius: 999px; font-weight: 600; font-size: 0.9rem; color: #1f1f1f; white-space: nowrap; }
+        .tag { display: inline-block; font-size: 0.6rem; font-weight: 700; padding: 0.1rem 0.6rem; border-radius: 999px; letter-spacing: 0.02em; }
         .tag-九巴 { background: #e5e7eb; color: #1f2937; }
         .tag-城巴 { background: #fef3c7; color: #92400e; }
         .tag-龍運 { background: #d1fae5; color: #065f46; }
@@ -41,39 +20,15 @@
         .tag-小巴 { background: #fce7f3; color: #9d174d; }
         .refresh-spin { animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .route-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #f5f5f3;
-        }
+        .route-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f5f5f3; }
         .route-row:last-child { border-bottom: none; }
-        .error-msg { color: #dc2626; font-size: 0.7rem; cursor: pointer; }
-        .debug-log {
-            font-size: 0.65rem;
-            color: #555;
-            margin-top: 0.5rem;
-            max-height: 150px;
-            overflow-y: auto;
-            background: #f0f0ee;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        .retry-btn {
-            cursor: pointer;
-            text-decoration: underline;
-        }
+        .debug-log { font-size: 0.65rem; color: #555; margin-top: 0.5rem; max-height: 150px; overflow-y: auto; background: #f0f0ee; padding: 0.5rem 0.75rem; border-radius: 8px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
     </style>
 </head>
 <body class="text-[#1c1c1c] min-h-screen p-4 flex flex-col items-center">
 
     <div class="w-full max-w-lg space-y-5 pb-10">
 
-        <!-- 標題列 -->
         <header class="flex justify-between items-start">
             <div>
                 <h1 class="text-xl font-bold tracking-tight">🚌 蝴蝶邨 · 屯門碼頭</h1>
@@ -85,10 +40,9 @@
         </header>
         <div class="text-right text-[11px] text-[#aaa] -mt-2">下次更新：<span id="countdown">30</span> 秒</div>
 
-        <!-- 各公司區塊（由 JavaScript 動態生成） -->
         <div id="app"></div>
 
-        <!-- 專線小巴（固定） -->
+        <!-- 專線小巴 -->
         <section class="card">
             <div class="flex items-center gap-2 mb-3"><span class="tag tag-小巴">專線小巴</span><span class="text-sm font-medium text-[#555]">路線資訊</span></div>
             <div class="route-row"><span><span class="font-semibold">44</span> <span class="text-xs text-[#888]">屯門碼頭 ↔ 上水</span></span><span class="text-xs text-[#aaa]">請用官方 App</span></div>
@@ -109,55 +63,29 @@
             <div id="eta-lr" class="flex flex-wrap gap-2 text-sm"><span class="eta-badge">讀取中</span></div>
         </section>
 
-        <!-- 除錯面板 -->
         <details class="text-xs text-[#888]">
-            <summary class="cursor-pointer font-medium">🔍 查看詳細除錯日誌 (點擊展開)</summary>
-            <div id="debug-log" class="debug-log">等待請求...</div>
+            <summary class="cursor-pointer font-medium">🔍 查看詳細除錯日誌</summary>
+            <div id="debug-log" class="debug-log">等待數據...</div>
         </details>
 
         <footer class="text-center text-[10px] text-[#bbb] pt-2 border-t border-[#eee]">
-            數據來源：data.hkbus.app (hk-bus-crawling) · 透過 CORS 代理
+            數據來源：ETA 由 GitHub Actions 定時抓取
         </footer>
     </div>
 
     <script>
-        // ================================================================
-        // 配置區：你要查詢的路線與站點
-        // ================================================================
+        // 路線配置（與 Python 腳本一致）
         const ROUTE_CONFIG = {
-            'kmb': {
-                '59X': { stopId: 'TM883', name: '屯門碼頭總站' },
-                '59M': { stopId: 'TM630', name: '蝴蝶邨蝶心樓' },
-                '59A': { stopId: 'TM630', name: '蝴蝶邨蝶心樓' },
-                'N260': { stopId: 'TM883', name: '屯門碼頭總站' },
-                '259B': { stopId: 'TM630', name: '蝴蝶邨蝶心樓' },
-                '59S': { stopId: 'TM883', name: '屯門碼頭總站' }
-            },
-            'lwb': {
-                'A33': { stopId: 'TM883', name: '屯門' }
-            },
-            'ctb': {
-                '962X': { stopId: '001410', name: '屯門碼頭總站' },
-                '962P': { stopId: '001410', name: '屯門碼頭總站' },
-                'B3': { stopId: '001410', name: '屯門碼頭總站' }
-            },
-            'mtr': {
-                'K52': { stopId: 'TM883', name: '屯門碼頭總站' },
-                '506': { stopId: 'TM883', name: '屯門碼頭' }
-            }
+            'kmb': { '59X': '屯門碼頭總站', '59M': '蝴蝶邨蝶心樓', '59A': '蝴蝶邨蝶心樓', 'N260': '屯門碼頭總站', '259B': '蝴蝶邨蝶心樓', '59S': '屯門碼頭總站' },
+            'lwb': { 'A33': '屯門' },
+            'ctb': { '962X': '屯門碼頭總站', '962P': '屯門碼頭總站', 'B3': '屯門碼頭總站' },
+            'mtr': { 'K52': '屯門碼頭總站', '506': '屯門碼頭' }
         };
+        const COMPANY_LABELS = { 'kmb':'九巴', 'lwb':'龍運', 'ctb':'城巴', 'mtr':'港鐵巴士' };
 
-        // 公司顯示名稱
-        const COMPANY_LABELS = {
-            'kmb': '九巴',
-            'lwb': '龍運',
-            'ctb': '城巴',
-            'mtr': '港鐵巴士'
-        };
+        let countdownValue = 30;
+        let timer = null;
 
-        // ================================================================
-        // 工具函數
-        // ================================================================
         function getMinutes(etaStr) {
             if (!etaStr) return null;
             const diff = new Date(etaStr) - new Date();
@@ -168,21 +96,12 @@
         }
 
         function renderEtas(etaList) {
-            if (!etaList || etaList.length === 0) {
-                return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
-            }
+            if (!etaList || etaList.length === 0) return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
             const times = etaList.slice(0, 3).map(item => getMinutes(item.eta)).filter(Boolean);
-            if (times.length === 0) {
-                return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
-            }
+            if (times.length === 0) return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
             return `<span class="eta-badge text-sm font-semibold text-stone-800">${times.join(' · ')}</span>`;
         }
 
-        function renderError(msg, retryFn) {
-            return `<span class="eta-badge text-sm text-red-500 retry-btn" onclick="(${retryFn.toString()})()">❌ ${msg}</span>`;
-        }
-
-        // 日誌
         function addLog(msg) {
             const logEl = document.getElementById('debug-log');
             if (logEl) {
@@ -192,70 +111,12 @@
             }
         }
 
-        // ================================================================
-        // 核心：透過 CORS 代理請求 API
-        // ================================================================
-        // 代理列表（依可靠性排序）
-        const PROXIES = [
-            (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-            (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-            (url) => `https://cors-anywhere.herokuapp.com/${url}`  // 可能需要先點擊授權
-        ];
-
-        async function fetchWithProxy(url, retries = 2) {
-            let lastError = null;
-            for (let i = 0; i < PROXIES.length && i <= retries; i++) {
-                try {
-                    const proxyUrl = PROXIES[i](url);
-                    addLog(`嘗試代理 ${i+1}: ${proxyUrl}`);
-                    const response = await fetch(proxyUrl, {
-                        signal: AbortSignal.timeout(10000) // 10 秒超時
-                    });
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const text = await response.text();
-                    // 檢查是否為 HTML 錯誤頁
-                    if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
-                        throw new Error('代理返回 HTML，可能失敗');
-                    }
-                    const json = JSON.parse(text);
-                    addLog(`✅ 代理 ${i+1} 成功`);
-                    return json;
-                } catch (err) {
-                    lastError = err;
-                    addLog(`⚠️ 代理 ${i+1} 失敗: ${err.message}`);
-                    await new Promise(r => setTimeout(r, 500));
-                }
-            }
-            throw new Error(`所有代理失敗，最後錯誤: ${lastError?.message || '未知'}`);
-        }
-
-        // ================================================================
-        // 獲取 ETA（統一入口）
-        // ================================================================
-        async function fetchEta(company, route, stopId) {
-            const url = `https://data.hkbus.app/eta/${company}/${route}/${stopId}`;
-            addLog(`請求: ${url}`);
-            const data = await fetchWithProxy(url);
-            if (!Array.isArray(data)) {
-                throw new Error('API 回傳格式錯誤');
-            }
-            addLog(`成功: ${route} 收到 ${data.length} 筆班次`);
-            return data;
-        }
-
-        // ================================================================
-        // 動態生成 UI 並更新
-        // ================================================================
-        // 儲存所有路線的 DOM 元素引用，以便更新
-        const routeElements = {};
-
         function buildUI() {
             const app = document.getElementById('app');
             app.innerHTML = '';
             for (const [company, routes] of Object.entries(ROUTE_CONFIG)) {
                 const section = document.createElement('section');
                 section.className = 'card';
-                section.id = `section-${company}`;
                 const label = COMPANY_LABELS[company] || company.toUpperCase();
                 section.innerHTML = `
                     <div class="flex items-center gap-2 mb-3">
@@ -265,103 +126,60 @@
                     <div class="space-y-1" id="container-${company}"></div>
                 `;
                 app.appendChild(section);
-                // 初始化每個路線的 DOM
                 const container = document.getElementById(`container-${company}`);
-                for (const [route, config] of Object.entries(routes)) {
+                for (const [route, name] of Object.entries(routes)) {
                     const row = document.createElement('div');
                     row.className = 'route-row';
-                    row.dataset.route = route;
                     row.innerHTML = `
-                        <span><span class="font-semibold">${route}</span> <span class="text-xs text-[#888]">${config.name}</span></span>
+                        <span><span class="font-semibold">${route}</span> <span class="text-xs text-[#888]">${name}</span></span>
                         <span id="eta-${company}-${route}" class="eta-badge text-sm">讀取中</span>
                     `;
                     container.appendChild(row);
-                    // 儲存引用
-                    routeElements[`${company}-${route}`] = document.getElementById(`eta-${company}-${route}`);
                 }
             }
         }
-
-        async function updateRoute(company, route, config) {
-            const el = routeElements[`${company}-${route}`];
-            if (!el) return;
-            try {
-                const data = await fetchEta(company, route, config.stopId);
-                el.outerHTML = renderEtas(data);
-                // 重新獲取新元素的引用
-                routeElements[`${company}-${route}`] = document.getElementById(`eta-${company}-${route}`);
-            } catch (err) {
-                addLog(`錯誤 ${company} ${route}: ${err.message}`);
-                const retryFn = () => updateRoute(company, route, config);
-                el.outerHTML = renderError('點擊重試', retryFn);
-                routeElements[`${company}-${route}`] = document.getElementById(`eta-${company}-${route}`);
-            }
-        }
-
-        // ================================================================
-        // 輕鐵（使用官方 API，也透過代理）
-        // ================================================================
-        async function fetchLightRail(elementId, stationId = '120') {
-            const el = document.getElementById(elementId);
-            try {
-                const url = `https://rt.data.gov.hk/v1/transport/mtr/lrt/getSchedule?station_id=${stationId}`;
-                addLog(`輕鐵請求: ${url}`);
-                const json = await fetchWithProxy(url);
-                const etas = [];
-                if (json.platform && json.platform.length) {
-                    json.platform.forEach(p => {
-                        if (p.routeList) {
-                            p.routeList.forEach(r => {
-                                if (r.trains) {
-                                    r.trains.forEach(t => {
-                                        if (t.time) etas.push({ eta: t.time });
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-                etas.sort((a, b) => new Date(a.eta) - new Date(b.eta));
-                el.innerHTML = renderEtas(etas);
-                addLog(`輕鐵成功: ${etas.length} 筆班次`);
-            } catch (err) {
-                addLog(`輕鐵錯誤: ${err.message}`);
-                const retryFn = () => fetchLightRail(elementId, stationId);
-                el.innerHTML = renderError('點擊重試', retryFn);
-            }
-        }
-
-        // ================================================================
-        // 總控
-        // ================================================================
-        let countdownValue = 30;
-        let countdownTimer = null;
 
         async function fetchAllData() {
             const icon = document.getElementById('refresh-icon');
             icon.className = 'refresh-spin';
-            const now = new Date();
-            document.getElementById('update-time').textContent = now.toLocaleTimeString('zh-HK', { hour12: false });
-            addLog('=== 開始更新 ===');
+            addLog('開始更新...');
 
-            const promises = [];
-            for (const [company, routes] of Object.entries(ROUTE_CONFIG)) {
-                for (const [route, config] of Object.entries(routes)) {
-                    promises.push(updateRoute(company, route, config));
+            try {
+                const response = await fetch('eta-data.json?t=' + Date.now());
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                const now = new Date(data.timestamp || Date.now());
+                document.getElementById('update-time').textContent = now.toLocaleTimeString('zh-HK', { hour12: false });
+
+                if (data.bus) {
+                    for (const [company, routes] of Object.entries(data.bus)) {
+                        for (const [route, etas] of Object.entries(routes)) {
+                            const el = document.getElementById(`eta-${company}-${route}`);
+                            if (el) el.outerHTML = renderEtas(etas);
+                        }
+                    }
                 }
-            }
-            promises.push(fetchLightRail('eta-lr', '120'));
-            await Promise.all(promises);
 
-            icon.className = '';
-            countdownValue = 30;
-            document.getElementById('countdown').textContent = countdownValue;
-            addLog('=== 更新完成 ===');
+                const lrEl = document.getElementById('eta-lr');
+                if (data.lightrail) {
+                    lrEl.innerHTML = renderEtas(data.lightrail);
+                } else {
+                    lrEl.innerHTML = '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
+                }
+
+                addLog('更新完成');
+            } catch (err) {
+                addLog(`錯誤: ${err.message}`);
+            } finally {
+                icon.className = '';
+                countdownValue = 30;
+                document.getElementById('countdown').textContent = countdownValue;
+            }
         }
 
         function startCountdown() {
-            if (countdownTimer) clearInterval(countdownTimer);
-            countdownTimer = setInterval(() => {
+            if (timer) clearInterval(timer);
+            timer = setInterval(() => {
                 countdownValue--;
                 if (countdownValue <= 0) {
                     fetchAllData();
@@ -371,9 +189,6 @@
             }, 1000);
         }
 
-        // ================================================================
-        // 初始化
-        // ================================================================
         window.onload = function() {
             buildUI();
             fetchAllData();
