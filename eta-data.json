@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-23T01:14:14.737529+08:00",
+  "timestamp": "2026-08-23T01:35:47.099408+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
@@ -36,8 +36,8 @@
         {
           "eta": null,
           "remark": {
-            "zh": "最後班次已過",
-            "en": "The final bus has departed from this stop"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
