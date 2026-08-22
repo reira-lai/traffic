@@ -2,235 +2,333 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>蝴蝶邨・屯門碼頭交通時間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>蝴蝶邨 · 屯門碼頭 交通實時</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap');
-        body { font-family: 'Noto Serif TC', serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
+        * { font-family: 'Inter', 'Noto Sans TC', sans-serif; }
+        body { background: #f8f8f6; }
+        .card {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #f0f0ed;
+        }
+        .eta-badge {
+            background: #f2f2f0;
+            padding: 0.2rem 0.8rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1f1f1f;
+            white-space: nowrap;
+        }
+        .tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 0.1rem 0.6rem;
+            border-radius: 999px;
+            letter-spacing: 0.02em;
+        }
+        .tag-九巴 { background: #e5e7eb; color: #1f2937; }
+        .tag-城巴 { background: #fef3c7; color: #92400e; }
+        .tag-龍運 { background: #d1fae5; color: #065f46; }
+        .tag-港鐵巴士 { background: #dbeafe; color: #1e40af; }
+        .tag-輕鐵 { background: #f3e8ff; color: #6b21a8; }
+        .tag-小巴 { background: #fce7f3; color: #9d174d; }
+        .refresh-spin { animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .route-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f5f5f3;
+        }
+        .route-row:last-child { border-bottom: none; }
+        .error-msg { color: #dc2626; font-size: 0.7rem; cursor: pointer; }
+        .debug-log { font-size: 0.65rem; color: #999; margin-top: 0.5rem; max-height: 100px; overflow-y: auto; background: #f5f5f3; padding: 0.5rem; border-radius: 8px; }
     </style>
 </head>
-<body class="bg-[#FBFBFA] text-[#222222] min-h-screen p-4 flex flex-col items-center">
+<body class="text-[#1c1c1c] min-h-screen p-4 flex flex-col items-center">
 
-    <div class="w-full max-w-md space-y-6 pb-8">
-        
-        <!-- 標題與更新時間 -->
-        <header class="py-4 border-b border-[#E5E5E3] flex justify-between items-end">
+    <div class="w-full max-w-lg space-y-5 pb-10">
+
+        <!-- 標題列 -->
+        <header class="flex justify-between items-start">
             <div>
-                <h1 class="text-lg font-semibold tracking-wider">此刻 · 交通</h1>
-                <p class="text-[11px] text-[#777] mt-1">更新時間：<span id="update-time">載入中...</span></p>
+                <h1 class="text-xl font-bold tracking-tight">🚌 蝴蝶邨 · 屯門碼頭</h1>
+                <p class="text-xs text-[#888] mt-0.5">更新時間：<span id="update-time" class="font-medium">載入中...</span></p>
             </div>
-            <button onclick="fetchAllData()" class="text-xs bg-[#EFEFED] hover:bg-[#E5E5E3] px-3 py-1.5 rounded-lg text-[#555] transition">
-                重新整理 ⟳
+            <button id="refresh-btn" onclick="fetchAllData()" class="bg-white border border-[#e5e5e3] hover:bg-[#f0f0ee] px-4 py-2 rounded-full text-sm font-medium transition flex items-center gap-2 shadow-sm">
+                <span id="refresh-icon">⟳</span> 重整
             </button>
         </header>
+        <div class="text-right text-[11px] text-[#aaa] -mt-2">下次更新：<span id="countdown">30</span> 秒</div>
 
-        <!-- 區塊：九巴 (KMB) 實時班次 -->
-        <section>
-            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">九巴 (KMB) 路線</h2>
-            <div class="bg-white border border-[#E5E5E3] rounded-xl p-4 shadow-sm space-y-4">
-                
-                <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">59X <span class="text-[10px] text-[#999]">湖畔樓 / 碼頭總站</span></span>
-                    </div>
-                    <div id="eta-59x" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
-                <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">59M <span class="text-[10px] text-[#999]">蝶心樓</span></span>
-                    </div>
-                    <div id="eta-59m" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
-                <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">59A <span class="text-[10px] text-[#999]">蝶心樓</span></span>
-                    </div>
-                    <div id="eta-59a" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
-                <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">59S <span class="text-[10px] text-[#999]">屯門碼頭總站</span></span>
-                    </div>
-                    <div id="eta-59s" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
-                <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">259B <span class="text-[10px] text-[#999]">蝶心樓</span></span>
-                    </div>
-                    <div id="eta-259b" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">N260 <span class="text-[10px] text-[#999]">蝶心樓 (通宵)</span></span>
-                    </div>
-                    <div id="eta-n260" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
+        <!-- ===== 九巴 ===== -->
+        <section class="card">
+            <div class="flex items-center gap-2 mb-3"><span class="tag tag-九巴">九巴</span><span class="text-sm font-medium text-[#555]">實時班次</span></div>
+            <div class="space-y-1" id="kmb-container">
+                <!-- 由 JavaScript 動態生成 -->
             </div>
         </section>
 
-        <!-- 區塊：港鐵巴士 (MTR Bus) -->
-        <section>
-            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">港鐵巴士</h2>
-            <div class="bg-white border border-[#E5E5E3] rounded-xl p-4 shadow-sm space-y-4">
-                
-                <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">K52 / K52A <span class="text-[10px] text-[#999]">蝴蝶邨/碼頭</span></span>
-                    </div>
-                    <div id="eta-k52" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">506 <span class="text-[10px] text-[#999]">屯門碼頭循環線</span></span>
-                    </div>
-                    <div id="eta-506" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
+        <!-- ===== 龍運 ===== -->
+        <section class="card">
+            <div class="flex items-center gap-2 mb-3"><span class="tag tag-龍運">龍運</span><span class="text-sm font-medium text-[#555]">實時班次</span></div>
+            <div class="space-y-1" id="lwb-container">
+                <!-- 由 JavaScript 動態生成 -->
             </div>
         </section>
 
-        <!-- 區塊：城巴 / 龍運 -->
-        <section>
-            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">城巴 / 龍運</h2>
-            <div class="bg-white border border-[#E5E5E3] rounded-xl p-4 shadow-sm space-y-4">
-                
-                <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">962P / 962X <span class="text-[10px] text-[#999]">往港島</span></span>
-                    </div>
-                    <div id="eta-962x" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
-                <div class="border-b border-[#F9F9F8] pb-3">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">B3 <span class="text-[10px] text-[#999]">往深圳灣口岸</span></span>
-                    </div>
-                    <div id="eta-b3" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="font-medium text-sm">A33 <span class="text-[10px] text-[#999]">往機場</span></span>
-                    </div>
-                    <div id="eta-a33" class="text-xs text-[#666] flex gap-2 flex-wrap"><span class="bg-[#F2F2F0] px-2 py-1 rounded">讀取中...</span></div>
-                </div>
-
+        <!-- ===== 城巴 ===== -->
+        <section class="card">
+            <div class="flex items-center gap-2 mb-3"><span class="tag tag-城巴">城巴</span><span class="text-sm font-medium text-[#555]">實時班次</span></div>
+            <div class="space-y-1" id="ctb-container">
+                <!-- 由 JavaScript 動態生成 -->
             </div>
         </section>
 
-        <!-- 區塊：輕鐵與小巴 -->
-        <section>
-            <h2 class="text-[10px] font-bold text-[#888] tracking-[0.2em] uppercase mb-3 ml-1">輕鐵與小巴</h2>
-            <div class="bg-white border border-[#E5E5E3] rounded-xl p-4 shadow-sm space-y-2 text-xs text-[#666]">
-                <p><span class="font-medium">輕鐵 (蝴蝶 / 碼頭站):</span> 507, 610, 614, 614P, 615, 615P</p>
-                <p><span class="font-medium">專線小巴:</span> 44, N44B (往上水/落馬洲)</p>
+        <!-- ===== 港鐵巴士 ===== -->
+        <section class="card">
+            <div class="flex items-center gap-2 mb-3"><span class="tag tag-港鐵巴士">港鐵巴士</span><span class="text-sm font-medium text-[#555]">實時班次</span></div>
+            <div class="space-y-1" id="mtr-container">
+                <!-- 由 JavaScript 動態生成 -->
             </div>
         </section>
 
-        <footer class="text-center text-[10px] text-[#B8B8B6] pt-2">
-            蝴蝶邨 ⇄ 屯門碼頭交通動態面板
+        <!-- ===== 專線小巴 ===== -->
+        <section class="card">
+            <div class="flex items-center gap-2 mb-3"><span class="tag tag-小巴">專線小巴</span><span class="text-sm font-medium text-[#555]">路線資訊</span></div>
+            <div class="route-row"><span><span class="font-semibold">44</span> <span class="text-xs text-[#888]">屯門碼頭 ↔ 上水</span></span><span class="text-xs text-[#aaa]">請用官方 App</span></div>
+            <div class="route-row"><span><span class="font-semibold">N44B</span> <span class="text-xs text-[#888]">屯門碼頭 ↔ 落馬洲</span></span><span class="text-xs text-[#aaa]">請用官方 App</span></div>
+        </section>
+
+        <!-- ===== 輕鐵 ===== -->
+        <section class="card">
+            <div class="flex items-center gap-2 mb-3"><span class="tag tag-輕鐵">輕鐵</span><span class="text-sm font-medium text-[#555]">屯門碼頭站 實時班次</span></div>
+            <div class="flex flex-wrap gap-1 mb-2">
+                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">507</span>
+                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">610</span>
+                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">614</span>
+                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">614P</span>
+                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">615</span>
+                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">615P</span>
+            </div>
+            <div id="eta-lr" class="flex flex-wrap gap-2 text-sm"><span class="eta-badge">讀取中</span></div>
+        </section>
+
+        <!-- 除錯資訊 -->
+        <details class="text-xs text-[#888]">
+            <summary class="cursor-pointer">🔍 查看詳細除錯日誌</summary>
+            <div id="debug-log" class="debug-log">載入中...</div>
+        </details>
+
+        <footer class="text-center text-[10px] text-[#bbb] pt-2 border-t border-[#eee]">
+            數據來源：data.hkbus.app (hk-bus-crawling)
         </footer>
     </div>
 
     <script>
-        function getMinutes(etaString) {
-            if (!etaString) return null;
-            const diff = new Date(etaString) - new Date();
+        // ================================================================
+        // 配置區：設定你要查詢的路線與站點
+        // ================================================================
+        const ROUTE_CONFIG = {
+            // 公司代號: { 顯示名稱: { 路線: 站點代碼 } }
+            'kmb': {
+                '59X': { stopId: 'TM883', name: '屯門碼頭總站' },
+                '59M': { stopId: 'TM630', name: '蝴蝶邨蝶心樓' },
+                '59A': { stopId: 'TM630', name: '蝴蝶邨蝶心樓' },
+                'N260': { stopId: 'TM883', name: '屯門碼頭總站' },
+                '259B': { stopId: 'TM630', name: '蝴蝶邨蝶心樓' },
+                '59S': { stopId: 'TM883', name: '屯門碼頭總站' }
+            },
+            'lwb': {
+                'A33': { stopId: 'TM883', name: '屯門' }
+            },
+            'ctb': {
+                '962X': { stopId: '001410', name: '屯門碼頭總站' },
+                '962P': { stopId: '001410', name: '屯門碼頭總站' },
+                'B3': { stopId: '001410', name: '屯門碼頭總站' }
+            },
+            'mtr': {
+                'K52': { stopId: 'TM883', name: '屯門碼頭總站' },
+                '506': { stopId: 'TM883', name: '屯門碼頭' }
+            }
+        };
+
+        // ================================================================
+        // 輔助函數
+        // ================================================================
+        function getMinutes(etaStr) {
+            if (!etaStr) return null;
+            const diff = new Date(etaStr) - new Date();
             const mins = Math.round(diff / 60000);
-            return mins <= 0 ? '即將到達' : mins + ' 分鐘';
+            if (mins <= 0) return '🚀 即將到達';
+            if (mins < 1) return '<1 分鐘';
+            return mins + ' 分鐘';
         }
 
-        function renderEtas(elementId, etaList) {
-            const container = document.getElementById(elementId);
-            container.innerHTML = '';
-            
+        function renderEtas(etaList) {
             if (!etaList || etaList.length === 0) {
-                container.innerHTML = '<span class="text-stone-400 bg-stone-50 px-2 py-1 rounded">暫無班次</span>';
-                return;
+                return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
             }
-
-            // 取最近 3 個班次
-            etaList.slice(0, 3).forEach(item => {
-                const timeText = getMinutes(item.eta);
-                const span = document.createElement('span');
-                span.className = 'bg-[#F2F2F0] px-2.5 py-1 rounded text-stone-700 font-medium';
-                span.innerText = timeText;
-                container.appendChild(span);
-            });
+            const times = etaList.slice(0, 3).map(item => getMinutes(item.eta)).filter(Boolean);
+            if (times.length === 0) {
+                return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
+            }
+            return `<span class="eta-badge text-sm font-semibold text-stone-800">${times.join(' · ')}</span>`;
         }
 
-        // 採用類似 hkbus 邏輯：直接透過九巴站點 ETA 官方 API 讀取
-        async function fetchKMBStop(stopId, route, elementId) {
-            try {
-                const response = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/${stopId}`);
-                if (!response.ok) throw new Error('API Error');
-                const result = await response.json();
-                const filtered = result.data ? result.data.filter(item => item.route === route) : [];
-                renderEtas(elementId, filtered);
-            } catch (error) {
-                document.getElementById(elementId).innerHTML = '<span class="text-red-500 bg-red-50 px-2 py-1 rounded text-[11px]">[Error]</span>';
+        function renderError(retryFn) {
+            return `<span class="eta-badge text-sm text-red-500 cursor-pointer" onclick="(${retryFn.toString()})()">❌ 點擊重試</span>`;
+        }
+
+        // 日誌記錄
+        function addLog(msg) {
+            const logEl = document.getElementById('debug-log');
+            if (logEl) {
+                const time = new Date().toLocaleTimeString();
+                logEl.innerHTML += `<div>[${time}] ${msg}</div>`;
+                logEl.scrollTop = logEl.scrollHeight;
             }
         }
 
-        // 通用 API 請求，支援錯誤捕捉顯示 [Error]
-        async function fetchRouteEta(url, route, elementId) {
+        // ================================================================
+        // 核心 API 呼叫 (使用 data.hkbus.app)
+        // ================================================================
+        async function fetchEta(company, route, stopId) {
+            const url = `https://data.hkbus.app/eta/${company}/${route}/${stopId}`;
+            addLog(`請求: ${url}`);
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            const data = await response.json();
+            addLog(`成功: ${route} 收到 ${data ? data.length : 0} 筆班次`);
+            return data;
+        }
+
+        // ================================================================
+        // 動態生成 UI 並更新數據
+        // ================================================================
+        async function updateRoute(company, route, config, containerId) {
+            const container = document.getElementById(containerId);
+            // 找到或創建該路線的 DOM 元素
+            let row = container.querySelector(`[data-route="${route}"]`);
+            if (!row) {
+                // 首次加載，創建 DOM
+                row = document.createElement('div');
+                row.className = 'route-row';
+                row.dataset.route = route;
+                row.innerHTML = `
+                    <span><span class="font-semibold">${route}</span> <span class="text-xs text-[#888]">${config.name}</span></span>
+                    <span id="eta-${company}-${route}" class="eta-badge text-sm">讀取中</span>
+                `;
+                container.appendChild(row);
+            }
+
+            const etaEl = document.getElementById(`eta-${company}-${route}`);
             try {
+                const data = await fetchEta(company, route, config.stopId);
+                etaEl.outerHTML = renderEtas(data);
+            } catch (err) {
+                addLog(`錯誤 ${company} ${route}: ${err.message}`);
+                etaEl.outerHTML = renderError(() => updateRoute(company, route, config, containerId));
+            }
+        }
+
+        // ================================================================
+        // 輕鐵 (使用官方 API)
+        // ================================================================
+        async function fetchLightRail(elementId, stationId = '120') {
+            const el = document.getElementById(elementId);
+            try {
+                const url = `https://rt.data.gov.hk/v1/transport/mtr/lrt/getSchedule?station_id=${stationId}`;
+                addLog(`請求輕鐵: ${url}`);
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('API Error');
-                const result = await response.json();
-                
-                // 兼容 hkbus / data.gov.hk 的常見資料結構
-                let list = [];
-                if (Array.isArray(result)) {
-                    list = result;
-                } else if (result.data) {
-                    list = Array.isArray(result.data) ? result.data : [result.data];
-                } else if (result.bus) {
-                    list = result.bus.eta || result.bus;
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const json = await response.json();
+                const etas = [];
+                if (json.platform && json.platform.length) {
+                    json.platform.forEach(p => {
+                        if (p.routeList) {
+                            p.routeList.forEach(r => {
+                                if (r.trains) {
+                                    r.trains.forEach(t => {
+                                        if (t.time) etas.push({ eta: t.time });
+                                    });
+                                }
+                            });
+                        }
+                    });
                 }
-
-                const filtered = list.filter(item => item.route === route);
-                renderEtas(elementId, filtered);
-            } catch (error) {
-                document.getElementById(elementId).innerHTML = '<span class="text-red-500 bg-red-50 px-2 py-1 rounded text-[11px]">[Error]</span>';
+                etas.sort((a, b) => new Date(a.eta) - new Date(b.eta));
+                el.innerHTML = renderEtas(etas);
+                addLog(`輕鐵成功: 收到 ${etas.length} 筆班次`);
+            } catch (err) {
+                addLog(`輕鐵錯誤: ${err.message}`);
+                el.innerHTML = renderError(() => fetchLightRail(elementId, stationId));
             }
         }
+
+        // ================================================================
+        // 總控
+        // ================================================================
+        let countdownValue = 30;
+        let countdownTimer = null;
 
         async function fetchAllData() {
+            const icon = document.getElementById('refresh-icon');
+            icon.className = 'refresh-spin';
             const now = new Date();
-            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
-                               now.getMinutes().toString().padStart(2, '0') + ':' + 
-                               now.getSeconds().toString().padStart(2, '0');
-            
-            document.getElementById('update-time').innerText = timeString + " (更新中...)";
+            document.getElementById('update-time').textContent = now.toLocaleTimeString('zh-HK', { hour12: false });
+            addLog('=== 開始更新 ===');
 
-            await Promise.all([
-                fetchKMBStop('TM646', '59X', 'eta-59x'),
-                fetchKMBStop('TM630', '59M', 'eta-59m'),
-                fetchKMBStop('TM630', '59A', 'eta-59a'),
-                fetchKMBStop('TM883', '59S', 'eta-59s'),
-                fetchKMBStop('TM630', '259B', 'eta-259b'),
-                fetchKMBStop('TM630', 'N260', 'eta-n260'),
-                fetchRouteEta('https://rt.data.gov.hk/v1/transport/mtr/bus/eta', 'K52', 'eta-k52'),
-                fetchRouteEta('https://rt.data.gov.hk/v1/transport/mtr/bus/eta', '506', 'eta-506'),
-                fetchRouteEta('https://rt.data.gov.hk/v1/transport/citybus/eta/ctb/002778/962X', '962X', 'eta-962x'),
-                fetchRouteEta('https://rt.data.gov.hk/v1/transport/citybus/eta/ctb/002778/B3', 'B3', 'eta-b3'),
-                fetchRouteEta('https://rt.data.gov.hk/v1/transport/citybus/eta/ctb/002778/A33', 'A33', 'eta-a33')
-            ]);
+            // 並行請求所有路線
+            const promises = [];
+            for (const [company, routes] of Object.entries(ROUTE_CONFIG)) {
+                const containerId = `${company}-container`;
+                for (const [route, config] of Object.entries(routes)) {
+                    promises.push(updateRoute(company, route, config, containerId));
+                }
+            }
+            // 加入輕鐵
+            promises.push(fetchLightRail('eta-lr', '120'));
 
-            document.getElementById('update-time').innerText = timeString;
+            await Promise.all(promises);
+
+            icon.className = '';
+            countdownValue = 30;
+            document.getElementById('countdown').textContent = countdownValue;
+            addLog('=== 更新完成 ===');
         }
 
+        function startCountdown() {
+            if (countdownTimer) clearInterval(countdownTimer);
+            countdownTimer = setInterval(() => {
+                countdownValue--;
+                if (countdownValue <= 0) {
+                    fetchAllData();
+                    countdownValue = 30;
+                }
+                document.getElementById('countdown').textContent = countdownValue;
+            }, 1000);
+        }
+
+        // 頁面載入時自動執行
         window.onload = function() {
+            // 預先創建所有容器
+            for (const company of Object.keys(ROUTE_CONFIG)) {
+                const container = document.getElementById(`${company}-container`);
+                if (container) container.innerHTML = ''; // 清空，由 JS 動態生成
+            }
             fetchAllData();
+            startCountdown();
         };
     </script>
 </body>
