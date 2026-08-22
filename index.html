@@ -41,18 +41,15 @@
         </header>
         <div class="text-right text-[11px] text-[#aaa] -mt-2">下次更新：<span id="countdown">30</span> 秒</div>
 
-        <!-- 巴士区域（动态生成） -->
         <div id="app"></div>
 
-        <!-- 轻铁区域（独立） -->
+        <!-- 輕鐵區域 -->
         <section class="card" id="lr-section">
             <div class="flex items-center gap-2 mb-3">
                 <span class="tag tag-輕鐵">輕鐵</span>
                 <span class="text-sm font-medium text-[#555]">實時班次</span>
             </div>
-            <div id="lr-container" class="space-y-1">
-                <!-- 由 JavaScript 动态生成 -->
-            </div>
+            <div id="lr-container" class="space-y-1"></div>
         </section>
 
         <!-- 專線小巴 -->
@@ -68,28 +65,28 @@
         </details>
 
         <footer class="text-center text-[10px] text-[#bbb] pt-2 border-t border-[#eee]">
-            數據來源：data.hkbus.app (GitHub) · rt.data.gov.hk (輕鐵)
+            數據來源：hk-bus-eta (開源)
         </footer>
     </div>
 
     <script>
-        // 公司标签
+        // 公司標籤
         const COMPANY_LABELS = {
             'kmb': '九巴', 'lwb': '龍運', 'ctb': '城巴', 'mtr': '港鐵巴士'
         };
 
-        // ========== 巴士硬编码列表（与Python同步） ==========
+        // 巴士路線硬編碼（僅用於初始化 UI，與 Python 腳本同步）
         const BUS_ITEMS = [
-            { company: 'kmb', route: '59X',  stop_id: 'TM648', display_name: '湖景邨湖翠樓' },
-            { company: 'kmb', route: '59M',  stop_id: 'TM671', display_name: '蝴蝶站' },
-            { company: 'kmb', route: '259D', stop_id: 'TM648', display_name: '湖景邨湖翠樓' },
-            { company: 'lwb', route: 'A33',  stop_id: 'TM436', display_name: '兆山苑柳景閣' },
-            { company: 'lwb', route: 'E33',  stop_id: 'TM436', display_name: '兆山苑柳景閣' },
-            { company: 'lwb', route: 'E33P', stop_id: 'TM436', display_name: '兆山苑柳景閣' },
-            { company: 'lwb', route: 'A34',  stop_id: 'TM436', display_name: '兆山苑柳景閣' },
-            { company: 'ctb', route: '962X', stop_id: 'TM453', display_name: '湖景邨湖畔樓' },
-            { company: 'mtr', route: 'K52',  stop_id: 'TM630', display_name: '蝴蝶邨蝶心樓' },
-            { company: 'mtr', route: '506',  stop_id: 'TM630', display_name: '蝴蝶邨蝶心樓' }
+            { company: 'kmb', route: '59X',  display_name: '湖景邨湖翠樓' },
+            { company: 'kmb', route: '59M',  display_name: '蝴蝶站' },
+            { company: 'kmb', route: '259D', display_name: '湖景邨湖翠樓' },
+            { company: 'lwb', route: 'A33',  display_name: '兆山苑柳景閣' },
+            { company: 'lwb', route: 'E33',  display_name: '兆山苑柳景閣' },
+            { company: 'lwb', route: 'E33P', display_name: '兆山苑柳景閣' },
+            { company: 'lwb', route: 'A34',  display_name: '兆山苑柳景閣' },
+            { company: 'ctb', route: '962X', display_name: '湖景邨湖畔樓' },
+            { company: 'mtr', route: 'K52',  display_name: '蝴蝶邨蝶心樓' },
+            { company: 'mtr', route: '506',  display_name: '蝴蝶邨蝶心樓' }
         ];
 
         let countdownValue = 30;
@@ -120,7 +117,6 @@
             }
         }
 
-        // 构建巴士 UI
         function buildBusUI() {
             const app = document.getElementById('app');
             app.innerHTML = '';
@@ -147,32 +143,26 @@
                     const row = document.createElement('div');
                     row.className = 'route-row';
                     row.dataset.route = item.route;
-                    row.dataset.stop = item.stop_id;
                     row.innerHTML = `
                         <span><span class="font-semibold">${item.route}</span> <span class="text-xs text-[#888]">${item.display_name}</span></span>
-                        <span id="eta-bus-${item.company}-${item.route}-${item.stop_id}" class="eta-badge text-sm">讀取中</span>
+                        <span id="eta-bus-${item.company}-${item.route}" class="eta-badge text-sm">讀取中</span>
                     `;
                     container.appendChild(row);
                 });
             }
         }
 
-        // 更新巴士 ETA
         function updateBus(data) {
             data.bus_items.forEach(item => {
-                const el = document.getElementById(`eta-bus-${item.company}-${item.route}-${item.stop_id}`);
+                const el = document.getElementById(`eta-bus-${item.company}-${item.route}`);
                 if (el) el.outerHTML = renderEtas(item.etas);
             });
         }
 
-        // 构建轻铁 UI（初始占位）
         function buildLrUI() {
-            const container = document.getElementById('lr-container');
-            // 清空，之后由数据填充
-            container.innerHTML = '';
+            document.getElementById('lr-container').innerHTML = '';
         }
 
-        // 更新轻铁
         function updateLr(data) {
             const container = document.getElementById('lr-container');
             container.innerHTML = '';
@@ -180,7 +170,7 @@
                 container.innerHTML = '<div class="route-row"><span class="text-sm text-stone-400">暫無數據</span></div>';
                 return;
             }
-            // 按站名分组
+            // 按站名分組
             const groups = {};
             data.lr_items.forEach(item => {
                 const key = item.station_name;
@@ -188,7 +178,6 @@
                 groups[key].push(item);
             });
             for (const [station, items] of Object.entries(groups)) {
-                // 添加站名标题
                 const title = document.createElement('div');
                 title.className = 'text-xs font-semibold text-[#888] mt-2 mb-1';
                 title.innerText = `📍 ${station}`;
@@ -217,15 +206,12 @@
                 const now = new Date(data.timestamp || Date.now());
                 document.getElementById('update-time').textContent = now.toLocaleTimeString('zh-HK', { hour12: false });
 
-                // 更新巴士
                 if (data.bus_items) {
                     updateBus(data);
                 }
-                // 更新轻铁
                 if (data.lr_items) {
                     updateLr(data);
                 }
-
                 addLog('更新完成');
             } catch (err) {
                 addLog(`錯誤: ${err.message}`);
@@ -250,7 +236,7 @@
 
         window.onload = function() {
             buildBusUI();
-            buildLrUI();   // 先建空架子
+            buildLrUI();
             fetchAllData();
             startCountdown();
         };
