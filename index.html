@@ -12,10 +12,10 @@
         .card { background: white; border-radius: 1.25rem; padding: 1rem 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f0f0ed; }
         .eta-badge { background: #f2f2f0; padding: 0.2rem 0.8rem; border-radius: 999px; font-weight: 600; font-size: 0.9rem; color: #1f1f1f; white-space: nowrap; }
         .tag { display: inline-block; font-size: 0.6rem; font-weight: 700; padding: 0.1rem 0.6rem; border-radius: 999px; letter-spacing: 0.02em; }
+        .tag-港鐵巴士 { background: #dbeafe; color: #1e40af; }
         .tag-九巴 { background: #e5e7eb; color: #1f2937; }
         .tag-城巴 { background: #fef3c7; color: #92400e; }
         .tag-龍運 { background: #d1fae5; color: #065f46; }
-        .tag-港鐵巴士 { background: #dbeafe; color: #1e40af; }
         .tag-輕鐵 { background: #f3e8ff; color: #6b21a8; }
         .tag-小巴 { background: #fce7f3; color: #9d174d; }
         .refresh-spin { animation: spin 0.8s linear infinite; }
@@ -41,18 +41,10 @@
         </header>
         <div class="text-right text-[11px] text-[#aaa] -mt-2">下次更新：<span id="countdown">30</span> 秒</div>
 
+        <!-- 所有動態卡片將按順序插入此容器 -->
         <div id="app"></div>
 
-        <!-- 輕鐵區域 -->
-        <section class="card" id="lr-section">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="tag tag-輕鐵">輕鐵</span>
-                <span class="text-sm font-medium text-[#555]">實時班次</span>
-            </div>
-            <div id="lr-container" class="space-y-1"></div>
-        </section>
-
-        <!-- 專線小巴 -->
+        <!-- 專線小巴（固定置底） -->
         <section class="card">
             <div class="flex items-center gap-2 mb-3"><span class="tag tag-小巴">專線小巴</span><span class="text-sm font-medium text-[#555]">路線資訊</span></div>
             <div class="route-row"><span><span class="font-semibold">44</span> <span class="text-xs text-[#888]">屯門碼頭 ↔ 上水</span></span><span class="text-xs text-[#aaa]">請用官方 App</span></div>
@@ -70,41 +62,48 @@
     </div>
 
     <script>
-        // 公司標籤
+        // 公司標籤與順序（此順序決定顯示順序：輕鐵→港鐵巴士→九巴→城巴→龍運）
+        const COMPANY_ORDER = ['輕鐵', '港鐵巴士', '九巴', '城巴', '龍運'];
         const COMPANY_LABELS = {
-            'kmb': '九巴', 'lwb': '龍運', 'ctb': '城巴', 'mtr': '港鐵巴士'
+            'kmb': '九巴',
+            'lwb': '龍運',
+            'ctb': '城巴',
+            'mtr': '港鐵巴士'
         };
 
-        // 巴士路線硬編碼（僅用於初始化 UI，與 Python 腳本同步）
+        // 巴士路線清單（與 Python 腳本一致）
         const BUS_ITEMS = [
+            { company: 'mtr', route: 'K52',  display_name: '蝴蝶邨蝶心樓' },
+            { company: 'mtr', route: '506',  display_name: '蝴蝶邨蝶心樓' },
             { company: 'kmb', route: '59X',  display_name: '湖景邨湖翠樓' },
             { company: 'kmb', route: '59M',  display_name: '蝴蝶站' },
             { company: 'kmb', route: '259D', display_name: '湖景邨湖翠樓' },
+            { company: 'ctb', route: '962X', display_name: '湖景邨湖畔樓' },
             { company: 'lwb', route: 'A33',  display_name: '兆山苑柳景閣' },
             { company: 'lwb', route: 'E33',  display_name: '兆山苑柳景閣' },
             { company: 'lwb', route: 'E33P', display_name: '兆山苑柳景閣' },
-            { company: 'lwb', route: 'A34',  display_name: '兆山苑柳景閣' },
-            { company: 'ctb', route: '962X', display_name: '湖景邨湖畔樓' },
-            { company: 'mtr', route: 'K52',  display_name: '蝴蝶邨蝶心樓' },
-            { company: 'mtr', route: '506',  display_name: '蝴蝶邨蝶心樓' }
+            { company: 'lwb', route: 'A34',  display_name: '兆山苑柳景閣' }
         ];
+
+        // 輕鐵資料（僅用於初始化 UI，數據來自 JSON）
+        const LR_STATIONS = ['蝴蝶站', '屯門碼頭站'];
 
         let countdownValue = 30;
         let timer = null;
 
-        function getMinutes(etaStr) {
-            if (!etaStr) return null;
-            const diff = new Date(etaStr) - new Date();
-            const mins = Math.round(diff / 60000);
-            if (mins <= 0) return '🚀 即將到達';
-            if (mins < 1) return '<1 分鐘';
-            return mins + ' 分鐘';
-        }
-
+        // ---- 渲染 ETA（純分鐘格式） ----
         function renderEtas(etaList) {
-            if (!etaList || etaList.length === 0) return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
-            const times = etaList.slice(0, 3).map(item => getMinutes(item.eta)).filter(Boolean);
-            if (times.length === 0) return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
+            if (!etaList || etaList.length === 0) {
+                return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
+            }
+            const times = etaList.slice(0, 3).map(item => {
+                const diff = new Date(item.eta) - new Date();
+                const mins = Math.round(diff / 60000);
+                return (mins <= 0) ? '0 分鐘' : mins + ' 分鐘';
+            });
+            if (times.length === 0) {
+                return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
+            }
             return `<span class="eta-badge text-sm font-semibold text-stone-800">${times.join(' · ')}</span>`;
         }
 
@@ -117,41 +116,78 @@
             }
         }
 
-        function buildBusUI() {
+        // ---- 構建所有卡片（按順序） ----
+        function buildAllUI() {
             const app = document.getElementById('app');
             app.innerHTML = '';
-            const groups = {};
-            BUS_ITEMS.forEach(item => {
-                if (!groups[item.company]) groups[item.company] = [];
-                groups[item.company].push(item);
-            });
 
-            for (const [company, list] of Object.entries(groups)) {
-                const section = document.createElement('section');
-                section.className = 'card company-section';
-                const label = COMPANY_LABELS[company] || company.toUpperCase();
-                section.innerHTML = `
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="tag tag-${label}">${label}</span>
-                        <span class="text-sm font-medium text-[#555]">實時班次</span>
-                    </div>
-                    <div class="space-y-1" id="container-${company}"></div>
-                `;
-                app.appendChild(section);
-                const container = document.getElementById(`container-${company}`);
-                list.forEach(item => {
-                    const row = document.createElement('div');
-                    row.className = 'route-row';
-                    row.dataset.route = item.route;
-                    row.innerHTML = `
-                        <span><span class="font-semibold">${item.route}</span> <span class="text-xs text-[#888]">${item.display_name}</span></span>
-                        <span id="eta-bus-${item.company}-${item.route}" class="eta-badge text-sm">讀取中</span>
-                    `;
-                    container.appendChild(row);
-                });
+            // 1. 輕鐵卡片
+            const lrSection = createSection('輕鐵', '輕鐵', 'lr-container');
+            app.appendChild(lrSection);
+
+            // 2. 港鐵巴士
+            const mtrItems = BUS_ITEMS.filter(item => item.company === 'mtr');
+            if (mtrItems.length) {
+                const mtrSection = createSection('港鐵巴士', '港鐵巴士', 'mtr-container');
+                app.appendChild(mtrSection);
+                fillBusRows('mtr-container', mtrItems);
+            }
+
+            // 3. 九巴
+            const kmbItems = BUS_ITEMS.filter(item => item.company === 'kmb');
+            if (kmbItems.length) {
+                const kmbSection = createSection('九巴', '九巴', 'kmb-container');
+                app.appendChild(kmbSection);
+                fillBusRows('kmb-container', kmbItems);
+            }
+
+            // 4. 城巴
+            const ctbItems = BUS_ITEMS.filter(item => item.company === 'ctb');
+            if (ctbItems.length) {
+                const ctbSection = createSection('城巴', '城巴', 'ctb-container');
+                app.appendChild(ctbSection);
+                fillBusRows('ctb-container', ctbItems);
+            }
+
+            // 5. 龍運（獨立卡片）
+            const lwbItems = BUS_ITEMS.filter(item => item.company === 'lwb');
+            if (lwbItems.length) {
+                const lwbSection = createSection('龍運', '龍運', 'lwb-container');
+                app.appendChild(lwbSection);
+                fillBusRows('lwb-container', lwbItems);
             }
         }
 
+        // 輔助：創建一個卡片區塊
+        function createSection(label, tagClass, containerId) {
+            const section = document.createElement('section');
+            section.className = 'card company-section';
+            section.innerHTML = `
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="tag tag-${tagClass}">${label}</span>
+                    <span class="text-sm font-medium text-[#555]">實時班次</span>
+                </div>
+                <div class="space-y-1" id="${containerId}"></div>
+            `;
+            return section;
+        }
+
+        // 輔助：填充巴士路線行
+        function fillBusRows(containerId, items) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'route-row';
+                row.innerHTML = `
+                    <span><span class="font-semibold">${item.route}</span> <span class="text-xs text-[#888]">${item.display_name}</span></span>
+                    <span id="eta-bus-${item.company}-${item.route}" class="eta-badge text-sm">讀取中</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // ---- 更新巴士數據 ----
         function updateBus(data) {
             data.bus_items.forEach(item => {
                 const el = document.getElementById(`eta-bus-${item.company}-${item.route}`);
@@ -159,10 +195,7 @@
             });
         }
 
-        function buildLrUI() {
-            document.getElementById('lr-container').innerHTML = '';
-        }
-
+        // ---- 更新輕鐵 ----
         function updateLr(data) {
             const container = document.getElementById('lr-container');
             container.innerHTML = '';
@@ -177,7 +210,10 @@
                 if (!groups[key]) groups[key] = [];
                 groups[key].push(item);
             });
-            for (const [station, items] of Object.entries(groups)) {
+            // 按照 LR_STATIONS 順序顯示
+            LR_STATIONS.forEach(station => {
+                const items = groups[station] || [];
+                if (items.length === 0) return;
                 const title = document.createElement('div');
                 title.className = 'text-xs font-semibold text-[#888] mt-2 mb-1';
                 title.innerText = `📍 ${station}`;
@@ -191,9 +227,10 @@
                     `;
                     container.appendChild(row);
                 });
-            }
+            });
         }
 
+        // ---- 總抓取 ----
         async function fetchAllData() {
             const icon = document.getElementById('refresh-icon');
             icon.className = 'refresh-spin';
@@ -235,8 +272,7 @@
         }
 
         window.onload = function() {
-            buildBusUI();
-            buildLrUI();
+            buildAllUI();
             fetchAllData();
             startCountdown();
         };
