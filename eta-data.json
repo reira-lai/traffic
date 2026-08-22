@@ -1,11 +1,19 @@
 {
-  "timestamp": "2026-08-23T05:00:13.760502+08:00",
+  "timestamp": "2026-08-23T05:24:59.501827+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
       "route": "K52",
       "display_name": "美樂花園",
-      "etas": []
+      "etas": [
+        {
+          "eta": "2026-08-23T06:00:06+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        }
+      ]
     },
     {
       "company": "lrtfeeder",
@@ -13,7 +21,21 @@
       "display_name": "美樂花園",
       "etas": [
         {
-          "eta": "2026-08-23T05:45:06+08:00",
+          "eta": "2026-08-23T05:45:15+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-23T05:55:15+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-23T06:05:15+08:00",
           "remark": {
             "zh": ""
           },
@@ -27,10 +49,10 @@
       "display_name": "美樂花園",
       "etas": [
         {
-          "eta": null,
+          "eta": "2026-08-23T06:10:00+08:00",
           "remark": {
-            "zh": "",
-            "en": ""
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
           },
           "co": "kmb"
         }
@@ -42,10 +64,10 @@
       "display_name": "美樂站",
       "etas": [
         {
-          "eta": null,
+          "eta": "2026-08-23T06:10:00+08:00",
           "remark": {
-            "zh": "",
-            "en": ""
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
           },
           "co": "kmb"
         }
@@ -63,6 +85,14 @@
             "en": "Scheduled Bus"
           },
           "co": "kmb"
+        },
+        {
+          "eta": "2026-08-23T06:20:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
         }
       ]
     },
@@ -70,7 +100,16 @@
       "company": "ctb",
       "route": "962X",
       "display_name": "美樂花園",
-      "etas": []
+      "etas": [
+        {
+          "eta": "2026-08-23T06:05:00+08:00",
+          "remark": {
+            "zh": "",
+            "en": ""
+          },
+          "co": "ctb"
+        }
+      ]
     },
     {
       "company": "lwb",
