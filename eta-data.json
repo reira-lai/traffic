@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-22T23:18:15.610630+08:00",
+  "timestamp": "2026-08-22T23:39:38.036346+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
@@ -7,14 +7,7 @@
       "display_name": "美樂花園",
       "etas": [
         {
-          "eta": "2026-08-22T23:20:09+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        },
-        {
-          "eta": "2026-08-22T23:40:09+08:00",
+          "eta": "2026-08-22T23:40:10+08:00",
           "remark": {
             "zh": ""
           },
@@ -28,35 +21,35 @@
       "display_name": "美樂花園",
       "etas": [
         {
-          "eta": "2026-08-22T23:23:10+08:00",
+          "eta": "2026-08-22T23:41:02+08:00",
           "remark": {
             "zh": ""
           },
           "co": "lrtfeeder"
         },
         {
-          "eta": "2026-08-22T23:32:10+08:00",
+          "eta": "2026-08-22T23:50:02+08:00",
           "remark": {
             "zh": ""
           },
           "co": "lrtfeeder"
         },
         {
-          "eta": "2026-08-22T23:41:10+08:00",
+          "eta": "2026-08-23T00:00:02+08:00",
           "remark": {
             "zh": ""
           },
           "co": "lrtfeeder"
         },
         {
-          "eta": "2026-08-22T23:50:10+08:00",
+          "eta": "2026-08-23T00:10:02+08:00",
           "remark": {
             "zh": ""
           },
           "co": "lrtfeeder"
         },
         {
-          "eta": "2026-08-23T00:00:10+08:00",
+          "eta": "2026-08-23T00:20:02+08:00",
           "remark": {
             "zh": ""
           },
@@ -70,77 +63,15 @@
       "display_name": "美樂花園",
       "etas": [
         {
-          "eta": "2026-08-22T23:17:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-08-22T23:26:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-08-22T23:35:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        }
-      ]
-    },
-    {
-      "company": "kmb",
-      "route": "59M",
-      "display_name": "美樂站",
-      "etas": [
-        {
-          "eta": "2026-08-22T23:24:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-08-22T23:34:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-08-22T23:50:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        }
-      ]
-    },
-    {
-      "company": "kmb",
-      "route": "259D",
-      "display_name": "美樂花園",
-      "etas": [
-        {
-          "eta": "2026-08-22T23:20:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
           "eta": "2026-08-22T23:45:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-08-22T23:55:00+08:00",
           "remark": {
             "zh": "原定班次",
             "en": "Scheduled Bus"
@@ -158,18 +89,72 @@
       ]
     },
     {
+      "company": "kmb",
+      "route": "59M",
+      "display_name": "美樂站",
+      "etas": [
+        {
+          "eta": "2026-08-22T23:50:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-08-23T00:06:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-08-23T00:26:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        }
+      ]
+    },
+    {
+      "company": "kmb",
+      "route": "259D",
+      "display_name": "美樂花園",
+      "etas": [
+        {
+          "eta": "2026-08-22T23:45:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-08-23T00:10:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-08-23T00:35:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        }
+      ]
+    },
+    {
       "company": "ctb",
       "route": "962X",
       "display_name": "美樂花園",
       "etas": [
-        {
-          "eta": "2026-08-22T23:33:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        },
         {
           "eta": "2026-08-22T23:52:00+08:00",
           "remark": {
@@ -180,6 +165,14 @@
         },
         {
           "eta": "2026-08-23T00:11:00+08:00",
+          "remark": {
+            "zh": "",
+            "en": ""
+          },
+          "co": "ctb"
+        },
+        {
+          "eta": "2026-08-23T00:30:00+08:00",
           "remark": {
             "zh": "",
             "en": ""
