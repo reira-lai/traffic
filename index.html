@@ -41,7 +41,19 @@
         </header>
         <div class="text-right text-[11px] text-[#aaa] -mt-2">下次更新：<span id="countdown">30</span> 秒</div>
 
+        <!-- 巴士区域（动态生成） -->
         <div id="app"></div>
+
+        <!-- 轻铁区域（独立） -->
+        <section class="card" id="lr-section">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="tag tag-輕鐵">輕鐵</span>
+                <span class="text-sm font-medium text-[#555]">實時班次</span>
+            </div>
+            <div id="lr-container" class="space-y-1">
+                <!-- 由 JavaScript 动态生成 -->
+            </div>
+        </section>
 
         <!-- 專線小巴 -->
         <section class="card">
@@ -50,37 +62,24 @@
             <div class="route-row"><span><span class="font-semibold">N44B</span> <span class="text-xs text-[#888]">屯門碼頭 ↔ 落馬洲</span></span><span class="text-xs text-[#aaa]">請用官方 App</span></div>
         </section>
 
-        <!-- 輕鐵 -->
-        <section class="card">
-            <div class="flex items-center gap-2 mb-3"><span class="tag tag-輕鐵">輕鐵</span><span class="text-sm font-medium text-[#555]">屯門碼頭站 實時班次</span></div>
-            <div class="flex flex-wrap gap-1 mb-2">
-                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">507</span>
-                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">610</span>
-                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">614</span>
-                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">614P</span>
-                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">615</span>
-                <span class="text-xs bg-[#f3e8ff] px-2 py-0.5 rounded-full">615P</span>
-            </div>
-            <div id="eta-lr" class="flex flex-wrap gap-2 text-sm"><span class="eta-badge">讀取中</span></div>
-        </section>
-
         <details class="text-xs text-[#888]">
             <summary class="cursor-pointer font-medium">🔍 查看詳細除錯日誌</summary>
             <div id="debug-log" class="debug-log">等待數據...</div>
         </details>
 
         <footer class="text-center text-[10px] text-[#bbb] pt-2 border-t border-[#eee]">
-            數據來源：data.hkbus.app (GitHub) · 由 GitHub Actions 定時抓取
+            數據來源：data.hkbus.app (GitHub) · rt.data.gov.hk (輕鐵)
         </footer>
     </div>
 
     <script>
+        // 公司标签
         const COMPANY_LABELS = {
             'kmb': '九巴', 'lwb': '龍運', 'ctb': '城巴', 'mtr': '港鐵巴士'
         };
 
-        // ========== 与 Python 脚本完全同步的列表 ==========
-        const INIT_ITEMS = [
+        // ========== 巴士硬编码列表（与Python同步） ==========
+        const BUS_ITEMS = [
             { company: 'kmb', route: '59X',  stop_id: 'TM648', display_name: '湖景邨湖翠樓' },
             { company: 'kmb', route: '59M',  stop_id: 'TM671', display_name: '蝴蝶站' },
             { company: 'kmb', route: '259D', stop_id: 'TM648', display_name: '湖景邨湖翠樓' },
@@ -121,11 +120,12 @@
             }
         }
 
-        function buildUI(items) {
+        // 构建巴士 UI
+        function buildBusUI() {
             const app = document.getElementById('app');
             app.innerHTML = '';
             const groups = {};
-            items.forEach(item => {
+            BUS_ITEMS.forEach(item => {
                 if (!groups[item.company]) groups[item.company] = [];
                 groups[item.company].push(item);
             });
@@ -146,9 +146,59 @@
                 list.forEach(item => {
                     const row = document.createElement('div');
                     row.className = 'route-row';
+                    row.dataset.route = item.route;
+                    row.dataset.stop = item.stop_id;
                     row.innerHTML = `
                         <span><span class="font-semibold">${item.route}</span> <span class="text-xs text-[#888]">${item.display_name}</span></span>
-                        <span id="eta-${item.company}-${item.route}-${item.stop_id}" class="eta-badge text-sm">讀取中</span>
+                        <span id="eta-bus-${item.company}-${item.route}-${item.stop_id}" class="eta-badge text-sm">讀取中</span>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+        }
+
+        // 更新巴士 ETA
+        function updateBus(data) {
+            data.bus_items.forEach(item => {
+                const el = document.getElementById(`eta-bus-${item.company}-${item.route}-${item.stop_id}`);
+                if (el) el.outerHTML = renderEtas(item.etas);
+            });
+        }
+
+        // 构建轻铁 UI（初始占位）
+        function buildLrUI() {
+            const container = document.getElementById('lr-container');
+            // 清空，之后由数据填充
+            container.innerHTML = '';
+        }
+
+        // 更新轻铁
+        function updateLr(data) {
+            const container = document.getElementById('lr-container');
+            container.innerHTML = '';
+            if (!data.lr_items || data.lr_items.length === 0) {
+                container.innerHTML = '<div class="route-row"><span class="text-sm text-stone-400">暫無數據</span></div>';
+                return;
+            }
+            // 按站名分组
+            const groups = {};
+            data.lr_items.forEach(item => {
+                const key = item.station_name;
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(item);
+            });
+            for (const [station, items] of Object.entries(groups)) {
+                // 添加站名标题
+                const title = document.createElement('div');
+                title.className = 'text-xs font-semibold text-[#888] mt-2 mb-1';
+                title.innerText = `📍 ${station}`;
+                container.appendChild(title);
+                items.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'route-row';
+                    row.innerHTML = `
+                        <span><span class="font-semibold">${item.route}</span></span>
+                        <span>${renderEtas(item.etas)}</span>
                     `;
                     container.appendChild(row);
                 });
@@ -167,18 +217,13 @@
                 const now = new Date(data.timestamp || Date.now());
                 document.getElementById('update-time').textContent = now.toLocaleTimeString('zh-HK', { hour12: false });
 
-                if (data.items && data.items.length) {
-                    data.items.forEach(item => {
-                        const el = document.getElementById(`eta-${item.company}-${item.route}-${item.stop_id}`);
-                        if (el) el.outerHTML = renderEtas(item.etas);
-                    });
+                // 更新巴士
+                if (data.bus_items) {
+                    updateBus(data);
                 }
-
-                const lrEl = document.getElementById('eta-lr');
-                if (data.lightrail) {
-                    lrEl.innerHTML = renderEtas(data.lightrail);
-                } else {
-                    lrEl.innerHTML = '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
+                // 更新轻铁
+                if (data.lr_items) {
+                    updateLr(data);
                 }
 
                 addLog('更新完成');
@@ -204,7 +249,8 @@
         }
 
         window.onload = function() {
-            buildUI(INIT_ITEMS);
+            buildBusUI();
+            buildLrUI();   // 先建空架子
             fetchAllData();
             startCountdown();
         };
