@@ -1,29 +1,99 @@
 {
-  "timestamp": "2026-08-22T21:58:47.116530+08:00",
+  "timestamp": "2026-08-22T22:19:58.506916+08:00",
   "bus_items": [
+    {
+      "company": "lrtfeeder",
+      "route": "K52",
+      "display_name": "美樂花園",
+      "etas": [
+        {
+          "eta": "2026-08-22T22:20:16+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:40:16+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T23:00:16+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        }
+      ]
+    },
+    {
+      "company": "lrtfeeder",
+      "route": "506",
+      "display_name": "美樂花園",
+      "etas": [
+        {
+          "eta": "2026-08-22T22:24:09+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:31:09+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:38:09+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:47:09+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:56:09+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        }
+      ]
+    },
     {
       "company": "kmb",
       "route": "59X",
-      "display_name": "湖景邨湖翠樓",
+      "display_name": "美樂花園",
       "etas": [
         {
-          "eta": "2026-08-22T22:04:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-08-22T22:12:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
           "eta": "2026-08-22T22:25:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-08-22T22:40:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-08-22T22:55:00+08:00",
           "remark": {
             "zh": "原定班次",
             "en": "Scheduled Bus"
@@ -35,10 +105,10 @@
     {
       "company": "kmb",
       "route": "59M",
-      "display_name": "蝴蝶站",
+      "display_name": "美樂站",
       "etas": [
         {
-          "eta": "2026-08-22T21:58:00+08:00",
+          "eta": "2026-08-22T22:22:00+08:00",
           "remark": {
             "zh": "原定班次",
             "en": "Scheduled Bus"
@@ -46,7 +116,7 @@
           "co": "kmb"
         },
         {
-          "eta": "2026-08-22T22:06:00+08:00",
+          "eta": "2026-08-22T22:30:00+08:00",
           "remark": {
             "zh": "原定班次",
             "en": "Scheduled Bus"
@@ -54,7 +124,7 @@
           "co": "kmb"
         },
         {
-          "eta": "2026-08-22T22:14:00+08:00",
+          "eta": "2026-08-22T22:37:00+08:00",
           "remark": {
             "zh": "原定班次",
             "en": "Scheduled Bus"
@@ -66,16 +136,8 @@
     {
       "company": "kmb",
       "route": "259D",
-      "display_name": "湖景邨湖翠樓",
+      "display_name": "美樂花園",
       "etas": [
-        {
-          "eta": "2026-08-22T22:10:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
         {
           "eta": "2026-08-22T22:30:00+08:00",
           "remark": {
@@ -97,24 +159,8 @@
     {
       "company": "ctb",
       "route": "962X",
-      "display_name": "湖景邨湖畔樓",
+      "display_name": "美樂花園",
       "etas": [
-        {
-          "eta": "2026-08-22T22:07:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        },
-        {
-          "eta": "2026-08-22T22:19:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        },
         {
           "eta": "2026-08-22T22:31:00+08:00",
           "remark": {
@@ -122,138 +168,41 @@
             "en": ""
           },
           "co": "ctb"
-        }
-      ]
-    },
-    {
-      "company": "lrtfeeder",
-      "route": "K52",
-      "display_name": "蝴蝶邨蝶心樓",
-      "etas": [
-        {
-          "eta": "2026-08-22T22:00:08+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
         },
         {
-          "eta": "2026-08-22T22:20:08+08:00",
+          "eta": "2026-08-22T22:43:00+08:00",
           "remark": {
-            "zh": ""
+            "zh": "",
+            "en": ""
           },
-          "co": "lrtfeeder"
-        },
-        {
-          "eta": "2026-08-22T22:40:08+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        }
-      ]
-    },
-    {
-      "company": "lrtfeeder",
-      "route": "506",
-      "display_name": "蝴蝶邨蝶心樓",
-      "etas": [
-        {
-          "eta": "2026-08-22T22:03:09+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        },
-        {
-          "eta": "2026-08-22T22:10:09+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        },
-        {
-          "eta": "2026-08-22T22:17:09+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        },
-        {
-          "eta": "2026-08-22T22:24:09+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        },
-        {
-          "eta": "2026-08-22T22:31:09+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        },
-        {
-          "eta": "2026-08-22T22:38:09+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
+          "co": "ctb"
         }
       ]
     },
     {
       "company": "lwb",
       "route": "A33",
-      "display_name": "兆山苑柳景閣",
+      "display_name": "美樂花園",
       "etas": []
     },
     {
       "company": "lwb",
       "route": "E33",
-      "display_name": "兆山苑柳景閣",
+      "display_name": "美樂花園",
       "etas": []
     },
     {
       "company": "lwb",
       "route": "E33P",
-      "display_name": "兆山苑柳景閣",
+      "display_name": "美樂花園",
       "etas": []
     },
     {
       "company": "lwb",
       "route": "A34",
-      "display_name": "兆山苑柳景閣",
+      "display_name": "美樂花園",
       "etas": []
     }
   ],
-  "lr_items": [
-    {
-      "station_name": "屯門碼頭站",
-      "route": "615",
-      "etas": [
-        {
-          "eta": "2026-08-22T22:05:54+08:00"
-        },
-        {
-          "eta": "2026-08-22T22:09:54+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "屯門碼頭站",
-      "route": "615P",
-      "etas": [
-        {
-          "eta": "2026-08-22T22:01:54+08:00"
-        },
-        {
-          "eta": "2026-08-22T22:09:54+08:00"
-        },
-        {
-          "eta": "2026-08-22T22:16:54+08:00"
-        }
-      ]
-    }
-  ]
+  "lr_items": []
 }
