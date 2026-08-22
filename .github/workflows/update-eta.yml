@@ -12,17 +12,17 @@ jobs:
       contents: write
     steps:
       - name: 檢出倉庫
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           persist-credentials: true
 
       - name: 設定 Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
       - name: 安裝相依套件
-        run: pip install requests
+        run: pip install hk-bus-eta
 
       - name: 執行抓取腳本
         run: python fetch_eta.py
