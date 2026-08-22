@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-23T04:44:44.963881+08:00",
+  "timestamp": "2026-08-23T05:00:13.760502+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
@@ -11,7 +11,15 @@
       "company": "lrtfeeder",
       "route": "506",
       "display_name": "美樂花園",
-      "etas": []
+      "etas": [
+        {
+          "eta": "2026-08-23T05:45:06+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        }
+      ]
     },
     {
       "company": "kmb",
@@ -49,10 +57,10 @@
       "display_name": "美樂花園",
       "etas": [
         {
-          "eta": null,
+          "eta": "2026-08-23T05:50:00+08:00",
           "remark": {
-            "zh": "",
-            "en": ""
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
           },
           "co": "kmb"
         }
