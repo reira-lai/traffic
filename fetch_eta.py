@@ -2,26 +2,27 @@ import requests
 import json
 from datetime import datetime
 
-# ========== 只包含截图里出现的路线和站点 ==========
-ROUTE_ITEMS = [
-    # 九巴
-    ('kmb', '59X',  'TM648', '湖景邨湖翠樓'),   # 截图 IMG_1578
-    ('kmb', '59M',  'TM671', '蝴蝶站'),          # 截图 IMG_1578
-    ('kmb', '259D', 'TM648', '湖景邨湖翠樓'),   # 截图 IMG_1579
-    # 龍運（全部在兆山苑柳景閣）
-    ('lwb', 'A33',  'TM436', '兆山苑柳景閣'),   # 截图 IMG_1580
-    ('lwb', 'E33',  'TM436', '兆山苑柳景閣'),   # 截图 IMG_1580
-    ('lwb', 'E33P', 'TM436', '兆山苑柳景閣'),   # 截图 IMG_1580
-    ('lwb', 'A34',  'TM436', '兆山苑柳景閣'),   # 截图 IMG_1578
-    # 城巴
-    ('ctb', '962X', 'TM453', '湖景邨湖畔樓'),   # 截图 IMG_1582
-    # ('ctb', 'B3',   '???',   '美樂花園'),     # 站码未知，暂不添加
-    # 港鐵巴士（蝴蝶邨蝶心樓）
-    ('mtr', 'K52',  'TM630', '蝴蝶邨蝶心樓'),   # 截图 IMG_1581
-    ('mtr', '506',  'TM630', '蝴蝶邨蝶心樓'),   # 截图 IMG_1581
+# ========== 巴士路线（只保留截图中的站名） ==========
+BUS_ITEMS = [
+    ('kmb', '59X',  'TM648', '湖景邨湖翠樓'),
+    ('kmb', '59M',  'TM671', '蝴蝶站'),
+    ('kmb', '259D', 'TM648', '湖景邨湖翠樓'),
+    ('lwb', 'A33',  'TM436', '兆山苑柳景閣'),
+    ('lwb', 'E33',  'TM436', '兆山苑柳景閣'),
+    ('lwb', 'E33P', 'TM436', '兆山苑柳景閣'),
+    ('lwb', 'A34',  'TM436', '兆山苑柳景閣'),
+    ('ctb', '962X', 'TM453', '湖景邨湖畔樓'),
+    ('mtr', 'K52',  'TM630', '蝴蝶邨蝶心樓'),
+    ('mtr', '506',  'TM630', '蝴蝶邨蝶心樓'),
 ]
 
-def fetch_eta(company, route, stop_id):
+# ========== 轻铁站点及路线（蝴蝶站+屯门码头站） ==========
+LR_STATIONS = [
+    {'id': '115', 'name': '蝴蝶站', 'routes': ['610', '615', '615P']},
+    {'id': '120', 'name': '屯門碼頭站', 'routes': ['507', '610', '614', '614P', '615', '615P']},
+]
+
+def fetch_bus_eta(company, route, stop_id):
     url = f"https://data.hkbus.app/eta/{company}/{route}/{stop_id}"
     try:
         resp = requests.get(url, timeout=10)
@@ -33,47 +34,77 @@ def fetch_eta(company, route, stop_id):
         print(f"Error fetching {company} {route} at {stop_id}: {e}")
         return []
 
-def fetch_lightrail(station_id='120'):
+def fetch_lr_station(station_id):
+    """获取某轻铁站所有列车的到站时间（未分组）"""
     url = f"https://rt.data.gov.hk/v1/transport/mtr/lrt/getSchedule?station_id={station_id}"
     try:
         resp = requests.get(url, timeout=10)
-        if resp.status_code == 200:
-            data = resp.json()
-            etas = []
-            for p in data.get('platform', []):
-                for r in p.get('routeList', []):
-                    for t in r.get('trains', []):
-                        if 'time' in t:
-                            etas.append({'eta': t['time']})
-            etas.sort(key=lambda x: x['eta'])
-            return etas[:10]
-        else:
+        if resp.status_code != 200:
             return []
+        data = resp.json()
+        items = []
+        for p in data.get('platform', []):
+            for r in p.get('routeList', []):
+                route = r.get('routeNumber')
+                if not route:
+                    continue
+                for t in r.get('trains', []):
+                    if 'time' in t:
+                        items.append({'route': route, 'eta': t['time']})
+        return items
     except Exception as e:
-        print(f"Error fetching lightrail: {e}")
+        print(f"Error fetching light rail station {station_id}: {e}")
         return []
 
+def group_lr_etas(raw_items, wanted_routes):
+    """按路线分组，并过滤出想要的路线，取每个路线最近3班"""
+    grouped = {}
+    for item in raw_items:
+        route = item['route']
+        if route not in wanted_routes:
+            continue
+        grouped.setdefault(route, []).append(item['eta'])
+    # 排序并取前3
+    result = []
+    for route, times in grouped.items():
+        times.sort()
+        result.append({
+            'route': route,
+            'etas': [{'eta': t} for t in times[:3]]
+        })
+    return result
+
 def main():
-    print("🚀 开始抓取截图中的路线 ETA...")
+    print("🚀 开始抓取所有数据...")
     result = {
         'timestamp': datetime.now().isoformat(),
-        'items': [],
-        'lightrail': []
+        'bus_items': [],       # 巴士条目
+        'lr_items': []         # 轻铁条目（每个路线-站点组合）
     }
 
-    for company, route, stop_id, display_name in ROUTE_ITEMS:
-        etas = fetch_eta(company, route, stop_id)
-        result['items'].append({
+    # ---- 抓取巴士 ----
+    for company, route, stop_id, display_name in BUS_ITEMS:
+        etas = fetch_bus_eta(company, route, stop_id)
+        result['bus_items'].append({
             'company': company,
             'route': route,
             'stop_id': stop_id,
             'display_name': display_name,
             'etas': etas if etas else []
         })
-        print(f"✅ {company} {route} at {display_name} -> {len(etas)} 笔班次")
+        print(f"✅ 巴士 {company} {route} at {display_name} -> {len(etas)} 班次")
 
-    # 轻铁
-    result['lightrail'] = fetch_lightrail('120')
+    # ---- 抓取轻铁 ----
+    for station in LR_STATIONS:
+        raw = fetch_lr_station(station['id'])
+        grouped = group_lr_etas(raw, station['routes'])
+        for entry in grouped:
+            result['lr_items'].append({
+                'station_name': station['name'],
+                'route': entry['route'],
+                'etas': entry['etas']
+            })
+        print(f"✅ 轻铁 {station['name']} 抓取完成，共 {len(grouped)} 条路线")
 
     with open('eta-data.json', 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
