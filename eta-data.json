@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-22T21:43:57.183356+08:00",
+  "timestamp": "2026-08-22T21:58:01.893839+08:00",
   "bus_items": [
     {
       "company": "kmb",
@@ -7,23 +7,23 @@
       "display_name": "湖景邨湖翠樓",
       "etas": [
         {
-          "eta": "2026-08-22T21:47:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
           "eta": "2026-08-22T21:56:00+08:00",
           "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         },
         {
           "eta": "2026-08-22T22:04:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-08-22T22:12:00+08:00",
           "remark": {
             "zh": "原定班次",
             "en": "Scheduled Bus"
@@ -37,14 +37,6 @@
       "route": "59M",
       "display_name": "蝴蝶站",
       "etas": [
-        {
-          "eta": "2026-08-22T21:50:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
         {
           "eta": "2026-08-22T21:58:00+08:00",
           "remark": {
@@ -60,6 +52,14 @@
             "en": "Scheduled Bus"
           },
           "co": "kmb"
+        },
+        {
+          "eta": "2026-08-22T22:14:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
         }
       ]
     },
@@ -68,14 +68,6 @@
       "route": "259D",
       "display_name": "湖景邨湖翠樓",
       "etas": [
-        {
-          "eta": "2026-08-22T21:50:00+08:00",
-          "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
         {
           "eta": "2026-08-22T22:10:00+08:00",
           "remark": {
@@ -91,6 +83,14 @@
             "en": "Scheduled Bus"
           },
           "co": "kmb"
+        },
+        {
+          "eta": "2026-08-22T22:55:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
         }
       ]
     },
@@ -100,23 +100,23 @@
       "display_name": "湖景邨湖畔樓",
       "etas": [
         {
-          "eta": "2026-08-22T21:45:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        },
-        {
-          "eta": "2026-08-22T21:55:00+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        },
-        {
           "eta": "2026-08-22T22:07:00+08:00",
+          "remark": {
+            "zh": "",
+            "en": ""
+          },
+          "co": "ctb"
+        },
+        {
+          "eta": "2026-08-22T22:19:00+08:00",
+          "remark": {
+            "zh": "",
+            "en": ""
+          },
+          "co": "ctb"
+        },
+        {
+          "eta": "2026-08-22T22:31:00+08:00",
           "remark": {
             "zh": "",
             "en": ""
@@ -126,16 +126,81 @@
       ]
     },
     {
-      "company": "mtr",
+      "company": "lrtfeeder",
       "route": "K52",
       "display_name": "蝴蝶邨蝶心樓",
-      "etas": []
+      "etas": [
+        {
+          "eta": "2026-08-22T22:00:02+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:20:02+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:40:02+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        }
+      ]
     },
     {
-      "company": "mtr",
+      "company": "lrtfeeder",
       "route": "506",
       "display_name": "蝴蝶邨蝶心樓",
-      "etas": []
+      "etas": [
+        {
+          "eta": "2026-08-22T22:03:10+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:10:10+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:17:10+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:24:10+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:31:10+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-08-22T22:38:10+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        }
+      ]
     },
     {
       "company": "lwb",
@@ -164,131 +229,29 @@
   ],
   "lr_items": [
     {
-      "station_name": "蝴蝶站",
-      "route": "610",
-      "etas": []
-    },
-    {
-      "station_name": "蝴蝶站",
-      "route": "615",
-      "etas": []
-    },
-    {
-      "station_name": "蝴蝶站",
-      "route": "615P",
-      "etas": [
-        {
-          "eta": "2026-08-22T21:44:04+08:00",
-          "remark": {
-            "zh": "❻",
-            "en": "❻"
-          },
-          "co": "lightrail"
-        },
-        {
-          "eta": "2026-08-22T21:44:17+08:00",
-          "remark": {
-            "zh": "❻",
-            "en": "❻"
-          },
-          "co": "lightrail"
-        }
-      ]
-    },
-    {
-      "station_name": "屯門碼頭站",
-      "route": "507",
-      "etas": [
-        {
-          "eta": "2026-08-22T21:44:05+08:00",
-          "remark": {
-            "zh": "❷",
-            "en": "❷"
-          },
-          "co": "lightrail"
-        },
-        {
-          "eta": "2026-08-22T21:44:15+08:00",
-          "remark": {
-            "zh": "❷",
-            "en": "❷"
-          },
-          "co": "lightrail"
-        },
-        {
-          "eta": "2026-08-22T21:44:04+08:00",
-          "remark": {
-            "zh": "❸",
-            "en": "❸"
-          },
-          "co": "lightrail"
-        },
-        {
-          "eta": "2026-08-22T21:44:14+08:00",
-          "remark": {
-            "zh": "❸",
-            "en": "❸"
-          },
-          "co": "lightrail"
-        }
-      ]
-    },
-    {
-      "station_name": "屯門碼頭站",
-      "route": "610",
-      "etas": []
-    },
-    {
-      "station_name": "屯門碼頭站",
-      "route": "614",
-      "etas": []
-    },
-    {
-      "station_name": "屯門碼頭站",
-      "route": "614P",
-      "etas": [
-        {
-          "eta": "2026-08-22T21:44:08+08:00",
-          "remark": {
-            "zh": "❺",
-            "en": "❺"
-          },
-          "co": "lightrail"
-        },
-        {
-          "eta": "2026-08-22T21:44:21+08:00",
-          "remark": {
-            "zh": "❺",
-            "en": "❺"
-          },
-          "co": "lightrail"
-        }
-      ]
-    },
-    {
       "station_name": "屯門碼頭站",
       "route": "615",
-      "etas": []
+      "etas": [
+        {
+          "eta": "2026-08-22T22:06:11+08:00"
+        },
+        {
+          "eta": "2026-08-22T22:10:11+08:00"
+        }
+      ]
     },
     {
       "station_name": "屯門碼頭站",
       "route": "615P",
       "etas": [
         {
-          "eta": "2026-08-22T21:44:05+08:00",
-          "remark": {
-            "zh": "❻",
-            "en": "❻"
-          },
-          "co": "lightrail"
+          "eta": "2026-08-22T22:02:11+08:00"
         },
         {
-          "eta": "2026-08-22T21:44:18+08:00",
-          "remark": {
-            "zh": "❻",
-            "en": "❻"
-          },
-          "co": "lightrail"
+          "eta": "2026-08-22T22:09:11+08:00"
+        },
+        {
+          "eta": "2026-08-22T22:17:11+08:00"
         }
       ]
     }
