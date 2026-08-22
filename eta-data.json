@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-23T00:37:55.931667+08:00",
+  "timestamp": "2026-08-23T00:56:16.547821+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
@@ -11,22 +11,7 @@
       "company": "lrtfeeder",
       "route": "506",
       "display_name": "美樂花園",
-      "etas": [
-        {
-          "eta": "2026-08-23T00:40:14+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        },
-        {
-          "eta": "2026-08-23T00:50:14+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        }
-      ]
+      "etas": []
     },
     {
       "company": "kmb",
@@ -34,10 +19,10 @@
       "display_name": "美樂花園",
       "etas": [
         {
-          "eta": "2026-08-23T00:40:00+08:00",
+          "eta": null,
           "remark": {
-            "zh": "最後班次",
-            "en": "Final Bus"
+            "zh": "最後班次已過",
+            "en": "The final bus has departed from this stop"
           },
           "co": "kmb"
         }
@@ -49,10 +34,10 @@
       "display_name": "美樂站",
       "etas": [
         {
-          "eta": "2026-08-23T00:46:00+08:00",
+          "eta": null,
           "remark": {
-            "zh": "最後班次",
-            "en": "Final Bus"
+            "zh": "最後班次已過",
+            "en": "The final bus has departed from this stop"
           },
           "co": "kmb"
         }
@@ -77,16 +62,7 @@
       "company": "ctb",
       "route": "962X",
       "display_name": "美樂花園",
-      "etas": [
-        {
-          "eta": "2026-08-23T00:44:03+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        }
-      ]
+      "etas": []
     },
     {
       "company": "lwb",
