@@ -23,6 +23,7 @@
         .route-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f5f5f3; }
         .route-row:last-child { border-bottom: none; }
         .debug-log { font-size: 0.65rem; color: #555; margin-top: 0.5rem; max-height: 150px; overflow-y: auto; background: #f0f0ee; padding: 0.5rem 0.75rem; border-radius: 8px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
+        .company-section { margin-bottom: 1.5rem; }
     </style>
 </head>
 <body class="text-[#1c1c1c] min-h-screen p-4 flex flex-col items-center">
@@ -69,19 +70,28 @@
         </details>
 
         <footer class="text-center text-[10px] text-[#bbb] pt-2 border-t border-[#eee]">
-            數據來源：ETA 由 GitHub Actions 定時抓取
+            數據來源：data.hkbus.app (GitHub) · 由 GitHub Actions 定時抓取
         </footer>
     </div>
 
     <script>
-        // 路線配置（與 Python 腳本一致）
-        const ROUTE_CONFIG = {
-            'kmb': { '59X': '屯門碼頭總站', '59M': '蝴蝶邨蝶心樓', '59A': '蝴蝶邨蝶心樓', 'N260': '屯門碼頭總站', '259B': '蝴蝶邨蝶心樓', '59S': '屯門碼頭總站' },
-            'lwb': { 'A33': '屯門' },
-            'ctb': { '962X': '屯門碼頭總站', '962P': '屯門碼頭總站', 'B3': '屯門碼頭總站' },
-            'mtr': { 'K52': '屯門碼頭總站', '506': '屯門碼頭' }
+        const COMPANY_LABELS = {
+            'kmb': '九巴', 'lwb': '龍運', 'ctb': '城巴', 'mtr': '港鐵巴士'
         };
-        const COMPANY_LABELS = { 'kmb':'九巴', 'lwb':'龍運', 'ctb':'城巴', 'mtr':'港鐵巴士' };
+
+        // ========== 与 Python 脚本完全同步的列表 ==========
+        const INIT_ITEMS = [
+            { company: 'kmb', route: '59X',  stop_id: 'TM648', display_name: '湖景邨湖翠樓' },
+            { company: 'kmb', route: '59M',  stop_id: 'TM671', display_name: '蝴蝶站' },
+            { company: 'kmb', route: '259D', stop_id: 'TM648', display_name: '湖景邨湖翠樓' },
+            { company: 'lwb', route: 'A33',  stop_id: 'TM436', display_name: '兆山苑柳景閣' },
+            { company: 'lwb', route: 'E33',  stop_id: 'TM436', display_name: '兆山苑柳景閣' },
+            { company: 'lwb', route: 'E33P', stop_id: 'TM436', display_name: '兆山苑柳景閣' },
+            { company: 'lwb', route: 'A34',  stop_id: 'TM436', display_name: '兆山苑柳景閣' },
+            { company: 'ctb', route: '962X', stop_id: 'TM453', display_name: '湖景邨湖畔樓' },
+            { company: 'mtr', route: 'K52',  stop_id: 'TM630', display_name: '蝴蝶邨蝶心樓' },
+            { company: 'mtr', route: '506',  stop_id: 'TM630', display_name: '蝴蝶邨蝶心樓' }
+        ];
 
         let countdownValue = 30;
         let timer = null;
@@ -111,12 +121,18 @@
             }
         }
 
-        function buildUI() {
+        function buildUI(items) {
             const app = document.getElementById('app');
             app.innerHTML = '';
-            for (const [company, routes] of Object.entries(ROUTE_CONFIG)) {
+            const groups = {};
+            items.forEach(item => {
+                if (!groups[item.company]) groups[item.company] = [];
+                groups[item.company].push(item);
+            });
+
+            for (const [company, list] of Object.entries(groups)) {
                 const section = document.createElement('section');
-                section.className = 'card';
+                section.className = 'card company-section';
                 const label = COMPANY_LABELS[company] || company.toUpperCase();
                 section.innerHTML = `
                     <div class="flex items-center gap-2 mb-3">
@@ -127,15 +143,15 @@
                 `;
                 app.appendChild(section);
                 const container = document.getElementById(`container-${company}`);
-                for (const [route, name] of Object.entries(routes)) {
+                list.forEach(item => {
                     const row = document.createElement('div');
                     row.className = 'route-row';
                     row.innerHTML = `
-                        <span><span class="font-semibold">${route}</span> <span class="text-xs text-[#888]">${name}</span></span>
-                        <span id="eta-${company}-${route}" class="eta-badge text-sm">讀取中</span>
+                        <span><span class="font-semibold">${item.route}</span> <span class="text-xs text-[#888]">${item.display_name}</span></span>
+                        <span id="eta-${item.company}-${item.route}-${item.stop_id}" class="eta-badge text-sm">讀取中</span>
                     `;
                     container.appendChild(row);
-                }
+                });
             }
         }
 
@@ -151,13 +167,11 @@
                 const now = new Date(data.timestamp || Date.now());
                 document.getElementById('update-time').textContent = now.toLocaleTimeString('zh-HK', { hour12: false });
 
-                if (data.bus) {
-                    for (const [company, routes] of Object.entries(data.bus)) {
-                        for (const [route, etas] of Object.entries(routes)) {
-                            const el = document.getElementById(`eta-${company}-${route}`);
-                            if (el) el.outerHTML = renderEtas(etas);
-                        }
-                    }
+                if (data.items && data.items.length) {
+                    data.items.forEach(item => {
+                        const el = document.getElementById(`eta-${item.company}-${item.route}-${item.stop_id}`);
+                        if (el) el.outerHTML = renderEtas(item.etas);
+                    });
                 }
 
                 const lrEl = document.getElementById('eta-lr');
@@ -190,7 +204,7 @@
         }
 
         window.onload = function() {
-            buildUI();
+            buildUI(INIT_ITEMS);
             fetchAllData();
             startCountdown();
         };
