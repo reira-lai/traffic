@@ -1,25 +1,39 @@
-from hk_bus_eta import HKEta
+import requests
 import json
 from datetime import datetime
-import requests
 
-# 你要查詢的路線清單（公司代號：路線號碼）
-WANTED_ROUTES = {
-    'kmb': ['59X', '59M', '59A', 'N260', '259B', '59S'],
-    'lwb': ['A33'],
-    'ctb': ['962X', '962P', 'B3'],
-    'mtr': ['K52', '506']
-}
+# ========== 只包含截图里出现的路线和站点 ==========
+ROUTE_ITEMS = [
+    # 九巴
+    ('kmb', '59X',  'TM648', '湖景邨湖翠樓'),   # 截图 IMG_1578
+    ('kmb', '59M',  'TM671', '蝴蝶站'),          # 截图 IMG_1578
+    ('kmb', '259D', 'TM648', '湖景邨湖翠樓'),   # 截图 IMG_1579
+    # 龍運（全部在兆山苑柳景閣）
+    ('lwb', 'A33',  'TM436', '兆山苑柳景閣'),   # 截图 IMG_1580
+    ('lwb', 'E33',  'TM436', '兆山苑柳景閣'),   # 截图 IMG_1580
+    ('lwb', 'E33P', 'TM436', '兆山苑柳景閣'),   # 截图 IMG_1580
+    ('lwb', 'A34',  'TM436', '兆山苑柳景閣'),   # 截图 IMG_1578
+    # 城巴
+    ('ctb', '962X', 'TM453', '湖景邨湖畔樓'),   # 截图 IMG_1582
+    # ('ctb', 'B3',   '???',   '美樂花園'),     # 站码未知，暂不添加
+    # 港鐵巴士（蝴蝶邨蝶心樓）
+    ('mtr', 'K52',  'TM630', '蝴蝶邨蝶心樓'),   # 截图 IMG_1581
+    ('mtr', '506',  'TM630', '蝴蝶邨蝶心樓'),   # 截图 IMG_1581
+]
 
-def find_route_id(hketa, company, route):
-    """在 route_list 中尋找符合公司與路線號碼的 route_id"""
-    for rid, info in hketa.route_list.items():
-        if info['route'] == route and company in info['co']:
-            return rid
-    return None
+def fetch_eta(company, route, stop_id):
+    url = f"https://data.hkbus.app/eta/{company}/{route}/{stop_id}"
+    try:
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200:
+            return resp.json()
+        else:
+            return []
+    except Exception as e:
+        print(f"Error fetching {company} {route} at {stop_id}: {e}")
+        return []
 
 def fetch_lightrail(station_id='120'):
-    """輕鐵使用官方 API"""
     url = f"https://rt.data.gov.hk/v1/transport/mtr/lrt/getSchedule?station_id={station_id}"
     try:
         resp = requests.get(url, timeout=10)
@@ -40,41 +54,30 @@ def fetch_lightrail(station_id='120'):
         return []
 
 def main():
-    print("🚀 開始抓取 ETA 數據...")
-    hketa = HKEta()
-    print(f"✅ 已載入路線資料庫，共 {len(hketa.route_list)} 條路線。")
-
+    print("🚀 开始抓取截图中的路线 ETA...")
     result = {
         'timestamp': datetime.now().isoformat(),
-        'bus': {},
+        'items': [],
         'lightrail': []
     }
 
-    # 處理每間公司的路線
-    for company, routes in WANTED_ROUTES.items():
-        result['bus'][company] = {}
-        for route in routes:
-            route_id = find_route_id(hketa, company, route)
-            if route_id:
-                try:
-                    etas = hketa.getEtas(route_id=route_id, seq=0, language='zh')
-                    result['bus'][company][route] = etas
-                    print(f"✅ {company} {route} 獲取成功，共 {len(etas)} 筆班次")
-                except Exception as e:
-                    print(f"❌ {company} {route} 查詢錯誤: {e}")
-                    result['bus'][company][route] = []
-            else:
-                print(f"⚠️ 找不到 {company} {route} 的 route_id")
-                result['bus'][company][route] = []
+    for company, route, stop_id, display_name in ROUTE_ITEMS:
+        etas = fetch_eta(company, route, stop_id)
+        result['items'].append({
+            'company': company,
+            'route': route,
+            'stop_id': stop_id,
+            'display_name': display_name,
+            'etas': etas if etas else []
+        })
+        print(f"✅ {company} {route} at {display_name} -> {len(etas)} 笔班次")
 
-    # 輕鐵
-    print("🚈 獲取輕鐵數據...")
+    # 轻铁
     result['lightrail'] = fetch_lightrail('120')
 
-    # 寫入 JSON
     with open('eta-data.json', 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
-    print("✅ ETA 數據已寫入 eta-data.json")
+    print("✅ 所有数据已写入 eta-data.json")
 
 if __name__ == '__main__':
     main()
