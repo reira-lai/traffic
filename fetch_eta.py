@@ -1,79 +1,58 @@
-import requests
+from hk_bus_eta import HKEta
 import json
-import os
 from datetime import datetime
-from zoneinfo import ZoneInfo   # Python 3.9+ 内置
+from zoneinfo import ZoneInfo
 
-# ========== 巴士路线（只保留截图中的站名） ==========
-BUS_ITEMS = [
-    ('kmb', '59X',  'TM648', '湖景邨湖翠樓'),
-    ('kmb', '59M',  'TM671', '蝴蝶站'),
-    ('kmb', '259D', 'TM648', '湖景邨湖翠樓'),
-    ('lwb', 'A33',  'TM436', '兆山苑柳景閣'),
-    ('lwb', 'E33',  'TM436', '兆山苑柳景閣'),
-    ('lwb', 'E33P', 'TM436', '兆山苑柳景閣'),
-    ('lwb', 'A34',  'TM436', '兆山苑柳景閣'),
-    ('ctb', '962X', 'TM453', '湖景邨湖畔樓'),
-    ('mtr', 'K52',  'TM630', '蝴蝶邨蝶心樓'),
-    ('mtr', '506',  'TM630', '蝴蝶邨蝶心樓'),
+# ========== 巴士路線（只保留你截圖中的站名與公司） ==========
+# 注意：這裡的 'display' 只是前端顯示用，實際站點由 route_id 決定
+BUS_ROUTES = [
+    {'company': 'kmb', 'route': '59X',  'display': '湖景邨湖翠樓'},
+    {'company': 'kmb', 'route': '59M',  'display': '蝴蝶站'},
+    {'company': 'kmb', 'route': '259D', 'display': '湖景邨湖翠樓'},
+    {'company': 'lwb', 'route': 'A33',  'display': '兆山苑柳景閣'},
+    {'company': 'lwb', 'route': 'E33',  'display': '兆山苑柳景閣'},
+    {'company': 'lwb', 'route': 'E33P', 'display': '兆山苑柳景閣'},
+    {'company': 'lwb', 'route': 'A34',  'display': '兆山苑柳景閣'},
+    {'company': 'ctb', 'route': '962X', 'display': '湖景邨湖畔樓'},
+    {'company': 'mtr', 'route': 'K52',  'display': '蝴蝶邨蝶心樓'},
+    {'company': 'mtr', 'route': '506',  'display': '蝴蝶邨蝶心樓'},
 ]
 
-# ========== 轻铁站点及路线 ==========
-LR_STATIONS = [
-    {'id': '115', 'name': '蝴蝶站', 'routes': ['610', '615', '615P']},
-    {'id': '120', 'name': '屯門碼頭站', 'routes': ['507', '610', '614', '614P', '615', '615P']},
+# ========== 輕鐵路線（直接在 route_list 中查找） ==========
+LR_ROUTES = [
+    {'station': '蝴蝶站', 'routes': ['610', '615', '615P']},
+    {'station': '屯門碼頭站', 'routes': ['507', '610', '614', '614P', '615', '615P']},
 ]
 
-def fetch_bus_eta(company, route, stop_id):
-    url = f"https://data.hkbus.app/eta/{company}/{route}/{stop_id}"
-    try:
-        resp = requests.get(url, timeout=10)
-        if resp.status_code == 200:
-            return resp.json()
-        else:
-            return []
-    except Exception as e:
-        print(f"Error fetching {company} {route} at {stop_id}: {e}")
-        return []
+def find_route_id(hketa, company, route):
+    """在 hketa.route_list 中尋找匹配的 route_id"""
+    for rid, info in hketa.route_list.items():
+        if info['route'] == route and company in info['co']:
+            return rid
+    return None
 
-def fetch_lr_station(station_id):
-    url = f"https://rt.data.gov.hk/v1/transport/mtr/lrt/getSchedule?station_id={station_id}"
-    try:
-        resp = requests.get(url, timeout=10)
-        if resp.status_code != 200:
-            return []
-        data = resp.json()
-        items = []
-        for p in data.get('platform', []):
-            for r in p.get('routeList', []):
-                route = r.get('routeNumber')
-                if not route:
-                    continue
-                for t in r.get('trains', []):
-                    if 'time' in t:
-                        items.append({'route': route, 'eta': t['time']})
-        return items
-    except Exception as e:
-        print(f"Error fetching light rail station {station_id}: {e}")
+def fetch_eta_with_hketa(hketa, company, route, seq=0):
+    """
+    使用 hk-bus-eta 查詢某路線的 ETA
+    seq: 0 表示去程，1 表示回程（輕鐵通常為 0）
+    """
+    route_id = find_route_id(hketa, company, route)
+    if not route_id:
+        print(f"⚠️ 找不到 {company} {route} 的 route_id")
+        # 列出可能的 candidates 方便除錯
+        candidates = [rid for rid, info in hketa.route_list.items() if info['route'] == route]
+        if candidates:
+            print(f"   可能的 route_id: {candidates}")
         return []
-
-def group_lr_etas(raw_items, wanted_routes):
-    grouped = {}
-    for item in raw_items:
-        route = item['route']
-        if route not in wanted_routes:
-            continue
-        grouped.setdefault(route, []).append(item['eta'])
-    result = []
-    for route, times in grouped.items():
-        times.sort()
-        result.append({
-            'route': route,
-            'etas': [{'eta': t} for t in times[:3]]
-        })
-    return result
+    try:
+        etas = hketa.getEtas(route_id=route_id, seq=seq, language='zh')
+        return etas
+    except Exception as e:
+        print(f"❌ {company} {route} 查詢錯誤: {e}")
+        return []
 
 def load_old_data(filename='eta-data.json'):
+    import os
     if os.path.exists(filename):
         try:
             with open(filename, 'r', encoding='utf-8') as f:
@@ -87,59 +66,68 @@ def save_data(data, filename='eta-data.json'):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def main():
-    print("🚀 开始抓取所有数据...")
-    
-    # ---------- 使用香港时区 ----------
+    print("🚀 開始使用 hk-bus-eta 抓取數據...")
+    hketa = HKEta()
+    print(f"✅ 已載入路線資料庫，共 {len(hketa.route_list)} 條路線。")
+
+    # 香港時區
     hk_tz = ZoneInfo("Asia/Hong_Kong")
     now_hk = datetime.now(hk_tz)
-    
+
     new_result = {
-        'timestamp': now_hk.isoformat(),   # 现在会包含 +08:00 时区信息
+        'timestamp': now_hk.isoformat(),
         'bus_items': [],
         'lr_items': []
     }
 
-    # ---- 抓取巴士 ----
+    # ---- 抓取巴士（seq=0 去程） ----
     bus_ok = False
-    for company, route, stop_id, display_name in BUS_ITEMS:
-        etas = fetch_bus_eta(company, route, stop_id)
+    for item in BUS_ROUTES:
+        company = item['company']
+        route = item['route']
+        display = item['display']
+        etas = fetch_eta_with_hketa(hketa, company, route, seq=0)
         new_result['bus_items'].append({
             'company': company,
             'route': route,
-            'stop_id': stop_id,
-            'display_name': display_name,
-            'etas': etas if etas else []
+            'display_name': display,
+            'etas': etas
         })
         if etas:
             bus_ok = True
-        print(f"巴士 {company} {route} at {display_name} -> {len(etas)} 班次")
+        print(f"巴士 {company} {route} at {display} -> {len(etas)} 班次")
 
-    # ---- 抓取轻铁 ----
+    # ---- 抓取輕鐵（同樣使用 hk-bus-eta） ----
     lr_ok = False
-    for station in LR_STATIONS:
-        raw = fetch_lr_station(station['id'])
-        grouped = group_lr_etas(raw, station['routes'])
-        for entry in grouped:
+    for station_info in LR_ROUTES:
+        station_name = station_info['station']
+        for route in station_info['routes']:
+            # 輕鐵的公司代號通常為 'lightRail'，但可能也為 'mtr'，先嘗試 'lightRail'
+            # 根據 hk-bus-eta 的 route_list，輕鐵的 co 可能是 ['lightRail']
+            etas = fetch_eta_with_hketa(hketa, 'lightRail', route, seq=0)
+            # 如果找不到，嘗試 'mtr' 作為備用
+            if not etas:
+                etas = fetch_eta_with_hketa(hketa, 'mtr', route, seq=0)
             new_result['lr_items'].append({
-                'station_name': station['name'],
-                'route': entry['route'],
-                'etas': entry['etas']
+                'station_name': station_name,
+                'route': route,
+                'etas': etas
             })
-            if entry['etas']:
+            if etas:
                 lr_ok = True
-        print(f"轻铁 {station['name']} 抓取完成，共 {len(grouped)} 条路线")
+            print(f"輕鐵 {route} at {station_name} -> {len(etas)} 班次")
 
-    # ---- 决定是否覆盖旧文件 ----
+    # ---- 決定是否覆蓋 ----
     if not bus_ok and not lr_ok:
         old_data = load_old_data()
         if old_data:
-            print("⚠️ 本次抓取全部为空，保留上一次的 JSON 文件。")
+            print("⚠️ 本次抓取全部為空，保留上一次的 JSON 文件。")
             return
         else:
-            print("⚠️ 本次抓取全部为空，且无旧文件，写入空数据。")
+            print("⚠️ 本次抓取全部為空，且無舊文件，寫入空數據。")
             save_data(new_result)
     else:
-        print("✅ 本次抓取有效，写入新数据。")
+        print("✅ 本次抓取有效，寫入新數據。")
         save_data(new_result)
 
 if __name__ == '__main__':
