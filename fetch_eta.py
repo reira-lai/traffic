@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from datetime import datetime
+from zoneinfo import ZoneInfo   # Python 3.9+ 内置
 
 # ========== 巴士路线（只保留截图中的站名） ==========
 BUS_ITEMS = [
@@ -73,7 +74,6 @@ def group_lr_etas(raw_items, wanted_routes):
     return result
 
 def load_old_data(filename='eta-data.json'):
-    """如果文件存在，读取其中的数据"""
     if os.path.exists(filename):
         try:
             with open(filename, 'r', encoding='utf-8') as f:
@@ -88,8 +88,13 @@ def save_data(data, filename='eta-data.json'):
 
 def main():
     print("🚀 开始抓取所有数据...")
+    
+    # ---------- 使用香港时区 ----------
+    hk_tz = ZoneInfo("Asia/Hong_Kong")
+    now_hk = datetime.now(hk_tz)
+    
     new_result = {
-        'timestamp': datetime.now().isoformat(),
+        'timestamp': now_hk.isoformat(),   # 现在会包含 +08:00 时区信息
         'bus_items': [],
         'lr_items': []
     }
@@ -125,12 +130,10 @@ def main():
         print(f"轻铁 {station['name']} 抓取完成，共 {len(grouped)} 条路线")
 
     # ---- 决定是否覆盖旧文件 ----
-    # 如果本次抓取完全没有数据，则保留旧文件（如果有）
     if not bus_ok and not lr_ok:
         old_data = load_old_data()
         if old_data:
             print("⚠️ 本次抓取全部为空，保留上一次的 JSON 文件。")
-            # 不写入新文件
             return
         else:
             print("⚠️ 本次抓取全部为空，且无旧文件，写入空数据。")
