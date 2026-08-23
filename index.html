@@ -41,7 +41,6 @@
         </header>
         <div class="text-right text-[11px] text-[#aaa] -mt-2">下次更新：<span id="countdown">30</span> 秒</div>
 
-        <!-- 所有卡片將按順序插入此容器 -->
         <div id="app"></div>
 
         <!-- 專線小巴（固定置底） -->
@@ -73,19 +72,15 @@
         };
 
         // ================================================================
-        // 巴士路線（站名恢復原狀，不改為「美樂」）
+        // 巴士路線（站名保持原樣）
         // ================================================================
         const BUS_ITEMS = [
-            // 港鐵巴士（保持原站名）
             { company: 'lrtfeeder', route: 'K52', display_name: '蝴蝶邨蝶心樓' },
             { company: 'lrtfeeder', route: '506', display_name: '蝴蝶邨蝶心樓' },
-            // 九巴（保持原站名）
             { company: 'kmb', route: '59X', display_name: '湖景邨湖翠樓' },
             { company: 'kmb', route: '59M', display_name: '蝴蝶站' },
             { company: 'kmb', route: '259D', display_name: '湖景邨湖翠樓' },
-            // 城巴
             { company: 'ctb', route: '962X', display_name: '湖景邨湖畔樓' },
-            // 龍運（保持原站名）
             { company: 'lwb', route: 'A33', display_name: '兆山苑柳景閣' },
             { company: 'lwb', route: 'E33', display_name: '兆山苑柳景閣' },
             { company: 'lwb', route: 'E33P', display_name: '兆山苑柳景閣' },
@@ -93,7 +88,7 @@
         ];
 
         // ================================================================
-        // 輕鐵路線（已改為「美樂站」）
+        // 輕鐵路線（美樂站使用 LR010）
         // ================================================================
         const LR_ITEMS = [
             { station: '美樂站', route: '610' },
@@ -108,14 +103,14 @@
         ];
 
         // ================================================================
-        // 渲染邏輯（保持不變）
+        // 渲染邏輯（修正 ID 遺失問題）
         // ================================================================
         let countdownValue = 30;
         let timer = null;
 
-        function renderEtas(etaList) {
+        function renderEtas(id, etaList) {
             if (!etaList || etaList.length === 0) {
-                return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
+                return `<span id="${id}" class="eta-badge text-sm text-stone-400">暫無班次</span>`;
             }
             const times = etaList.slice(0, 3).map(item => {
                 const diff = new Date(item.eta) - new Date();
@@ -123,9 +118,9 @@
                 return (mins <= 0) ? '0 分鐘' : mins + ' 分鐘';
             });
             if (times.length === 0) {
-                return '<span class="eta-badge text-sm text-stone-400">暫無班次</span>';
+                return `<span id="${id}" class="eta-badge text-sm text-stone-400">暫無班次</span>`;
             }
-            return `<span class="eta-badge text-sm font-semibold text-stone-800">${times.join(' · ')}</span>`;
+            return `<span id="${id}" class="eta-badge text-sm font-semibold text-stone-800">${times.join(' · ')}</span>`;
         }
 
         function addLog(msg) {
@@ -156,10 +151,10 @@
                 routes.forEach(item => {
                     const row = document.createElement('div');
                     row.className = 'route-row';
-                    row.id = `lr-row-${station}-${item.route}`;
+                    const key = `eta-lr-${station}-${item.route}`;
                     row.innerHTML = `
                         <span><span class="font-semibold">${item.route}</span></span>
-                        <span id="eta-lr-${station}-${item.route}" class="eta-badge text-sm">讀取中</span>
+                        <span id="${key}" class="eta-badge text-sm">讀取中</span>
                     `;
                     lrContainer.appendChild(row);
                 });
@@ -177,10 +172,10 @@
                 items.forEach(item => {
                     const row = document.createElement('div');
                     row.className = 'route-row';
-                    row.id = `bus-row-${company}-${item.route}`;
+                    const key = `eta-bus-${company}-${item.route}`;
                     row.innerHTML = `
                         <span><span class="font-semibold">${item.route}</span> <span class="text-xs text-[#888]">${item.display_name}</span></span>
-                        <span id="eta-bus-${company}-${item.route}" class="eta-badge text-sm">讀取中</span>
+                        <span id="${key}" class="eta-badge text-sm">讀取中</span>
                     `;
                     container.appendChild(row);
                 });
@@ -200,19 +195,20 @@
             return section;
         }
 
-        // ---- 更新數據 ----
+        // ---- 更新數據（修正 outerHTML 問題） ----
         function updateAllData(data) {
             if (data.bus_items) {
                 data.bus_items.forEach(item => {
-                    const el = document.getElementById(`eta-bus-${item.company}-${item.route}`);
-                    if (el) el.outerHTML = renderEtas(item.etas);
+                    const key = `eta-bus-${item.company}-${item.route}`;
+                    const el = document.getElementById(key);
+                    if (el) el.outerHTML = renderEtas(key, item.etas);
                 });
             }
             if (data.lr_items) {
                 data.lr_items.forEach(item => {
                     const key = `eta-lr-${item.station_name}-${item.route}`;
                     const el = document.getElementById(key);
-                    if (el) el.outerHTML = renderEtas(item.etas);
+                    if (el) el.outerHTML = renderEtas(key, item.etas);
                 });
             }
         }
