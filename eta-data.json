@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-24T01:01:03.008422+08:00",
+  "timestamp": "2026-08-24T01:31:09.158765+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
@@ -36,8 +36,8 @@
         {
           "eta": null,
           "remark": {
-            "zh": "最後班次已過",
-            "en": "The final bus has departed from this stop"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
@@ -49,10 +49,10 @@
       "display_name": "湖景邨湖翠樓",
       "etas": [
         {
-          "eta": "2026-08-24T01:00:00+08:00",
+          "eta": null,
           "remark": {
-            "zh": "最後班次",
-            "en": "Final Bus"
+            "zh": "最後班次已過",
+            "en": "The final bus has departed from this stop"
           },
           "co": "kmb"
         }
@@ -92,28 +92,10 @@
   "lr_items": [
     {
       "station_name": "美樂站",
-      "route": "615",
-      "etas": [
-        {
-          "eta": "2026-08-24T01:09:14+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "美樂站",
-      "route": "610",
-      "etas": [
-        {
-          "eta": "2026-08-24T01:17:14+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "美樂站",
       "route": "615P",
       "etas": [
         {
-          "eta": "2026-08-24T01:20:14+08:00"
+          "eta": "2026-08-24T01:33:18+08:00"
         }
       ]
     }
