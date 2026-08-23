@@ -1,7 +1,7 @@
 from hk_bus_eta import HKEta
 import json
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 import sys
 import re
@@ -24,7 +24,7 @@ BUS_ROUTES = [
 ]
 
 # ============================================================
-# 配置：輕鐵（美樂站使用正確的 station_id: LR010）
+# 配置：輕鐵（美樂站使用 LR010）
 # ============================================================
 LR_ROUTES = [
     {'station': '美樂站', 'station_id': 'LR010', 'routes': ['610', '615', '615P']},
@@ -92,8 +92,7 @@ def fetch_lwb_eta(route, stop_id):
         return []
 
 def fetch_lightrail_manual(station_id, wanted_routes):
-    """手動抓取輕鐵，station_id 格式如 LR010 -> 010"""
-    # 去掉 "LR" 前綴
+    """手動抓取輕鐵，使用正確的時區處理"""
     clean_id = station_id[2:] if station_id.startswith('LR') else station_id
     url = f"https://rt.data.gov.hk/v1/transport/mtr/lrt/getSchedule?station_id={clean_id}&with_special=1"
     print(f"  輕鐵請求: {url}")
@@ -107,6 +106,7 @@ def fetch_lightrail_manual(station_id, wanted_routes):
         platform_list = data.get('platform_list', [])
         print(f"  輕鐵平台數: {len(platform_list)}")
         items = []
+        hk_tz = ZoneInfo("Asia/Hong_Kong")
         for platform in platform_list:
             for e in platform.get('route_list', []):
                 route_no = e.get('route_no')
@@ -120,10 +120,11 @@ def fetch_lightrail_manual(station_id, wanted_routes):
                 else:
                     m = re.search(r'\d+', time_en)
                     waitTime = int(m.group()) if m else 0
-                dt = datetime.fromtimestamp(time.time() + waitTime * 60 + 8 * 3600)
-                eta_str = dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+08:00")
+                # 修正時間計算，使用香港時區
+                dt = datetime.now(hk_tz) + timedelta(minutes=waitTime)
+                eta_str = dt.isoformat(timespec='seconds')  # 例如 "2026-08-23T14:35:00+08:00"
                 items.append({'route': route_no, 'eta': eta_str})
-        # 按路线分组
+        # 按路線分組
         grouped = {}
         for item in items:
             grouped.setdefault(item['route'], []).append(item['eta'])
