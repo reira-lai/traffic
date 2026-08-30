@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-31T00:48:20.909497+08:00",
+  "timestamp": "2026-08-31T03:30:47.011761+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
@@ -11,15 +11,7 @@
       "company": "lrtfeeder",
       "route": "506",
       "display_name": "蝴蝶邨蝶心樓",
-      "etas": [
-        {
-          "eta": "2026-08-31T00:50:15+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        }
-      ]
+      "etas": []
     },
     {
       "company": "kmb",
@@ -29,8 +21,8 @@
         {
           "eta": null,
           "remark": {
-            "zh": "最後班次已過",
-            "en": "The final bus has departed from this stop"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
@@ -44,8 +36,8 @@
         {
           "eta": null,
           "remark": {
-            "zh": "最後班次已過",
-            "en": "The final bus has departed from this stop"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
@@ -57,10 +49,10 @@
       "display_name": "湖景邨湖翠樓",
       "etas": [
         {
-          "eta": "2026-08-31T01:00:00+08:00",
+          "eta": null,
           "remark": {
-            "zh": "最後班次",
-            "en": "Final Bus"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
@@ -97,33 +89,5 @@
       "etas": []
     }
   ],
-  "lr_items": [
-    {
-      "station_name": "美樂站",
-      "route": "610",
-      "etas": [
-        {
-          "eta": "2026-08-31T01:00:27+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "美樂站",
-      "route": "615P",
-      "etas": [
-        {
-          "eta": "2026-08-31T01:03:27+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "屯門碼頭站",
-      "route": "507",
-      "etas": [
-        {
-          "eta": "2026-08-31T00:56:28+08:00"
-        }
-      ]
-    }
-  ]
+  "lr_items": []
 }
