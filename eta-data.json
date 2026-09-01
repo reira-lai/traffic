@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-02T00:35:48.637960+08:00",
+  "timestamp": "2026-09-02T03:33:03.525582+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
@@ -11,22 +11,7 @@
       "company": "lrtfeeder",
       "route": "506",
       "display_name": "蝴蝶邨蝶心樓",
-      "etas": [
-        {
-          "eta": "2026-09-02T00:40:12+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        },
-        {
-          "eta": "2026-09-02T00:50:12+08:00",
-          "remark": {
-            "zh": ""
-          },
-          "co": "lrtfeeder"
-        }
-      ]
+      "etas": []
     },
     {
       "company": "kmb",
@@ -34,10 +19,10 @@
       "display_name": "湖景邨湖翠樓",
       "etas": [
         {
-          "eta": "2026-09-02T00:40:00+08:00",
+          "eta": null,
           "remark": {
-            "zh": "最後班次",
-            "en": "Final Bus"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
@@ -49,10 +34,10 @@
       "display_name": "蝴蝶站",
       "etas": [
         {
-          "eta": "2026-09-02T00:46:00+08:00",
+          "eta": null,
           "remark": {
-            "zh": "最後班次",
-            "en": "Final Bus"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
@@ -64,18 +49,10 @@
       "display_name": "湖景邨湖翠樓",
       "etas": [
         {
-          "eta": "2026-09-02T00:35:00+08:00",
+          "eta": null,
           "remark": {
-            "zh": "原定班次",
-            "en": "Scheduled Bus"
-          },
-          "co": "kmb"
-        },
-        {
-          "eta": "2026-09-02T01:00:00+08:00",
-          "remark": {
-            "zh": "最後班次",
-            "en": "Final Bus"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
@@ -85,16 +62,7 @@
       "company": "ctb",
       "route": "962X",
       "display_name": "湖景邨湖畔樓",
-      "etas": [
-        {
-          "eta": "2026-09-02T00:48:46+08:00",
-          "remark": {
-            "zh": "",
-            "en": ""
-          },
-          "co": "ctb"
-        }
-      ]
+      "etas": []
     },
     {
       "company": "lwb",
@@ -121,63 +89,5 @@
       "etas": []
     }
   ],
-  "lr_items": [
-    {
-      "station_name": "美樂站",
-      "route": "610",
-      "etas": [
-        {
-          "eta": "2026-09-02T00:38:54+08:00"
-        },
-        {
-          "eta": "2026-09-02T00:42:54+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "美樂站",
-      "route": "615",
-      "etas": [
-        {
-          "eta": "2026-09-02T00:47:54+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "美樂站",
-      "route": "615P",
-      "etas": [
-        {
-          "eta": "2026-09-02T00:50:54+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "屯門碼頭站",
-      "route": "610",
-      "etas": [
-        {
-          "eta": "2026-09-02T00:35:55+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "屯門碼頭站",
-      "route": "614P",
-      "etas": [
-        {
-          "eta": "2026-09-02T00:38:55+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "屯門碼頭站",
-      "route": "614",
-      "etas": [
-        {
-          "eta": "2026-09-02T00:44:55+08:00"
-        }
-      ]
-    }
-  ]
+  "lr_items": []
 }
