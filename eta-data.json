@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T02:10:51.637039+08:00",
+  "timestamp": "2026-09-05T04:45:22.597113+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
@@ -49,10 +49,10 @@
       "display_name": "湖景邨湖翠樓",
       "etas": [
         {
-          "eta": null,
+          "eta": "2026-09-05T05:30:00+08:00",
           "remark": {
-            "zh": "",
-            "en": ""
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
           },
           "co": "kmb"
         }
