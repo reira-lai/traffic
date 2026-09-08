@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-09T01:25:33.334966+08:00",
+  "timestamp": "2026-09-09T04:05:30.051450+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
@@ -21,8 +21,8 @@
         {
           "eta": null,
           "remark": {
-            "zh": "最後班次已過",
-            "en": "The final bus has departed from this stop"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
@@ -51,8 +51,8 @@
         {
           "eta": null,
           "remark": {
-            "zh": "最後班次已過",
-            "en": "The final bus has departed from this stop"
+            "zh": "",
+            "en": ""
           },
           "co": "kmb"
         }
@@ -89,24 +89,5 @@
       "etas": []
     }
   ],
-  "lr_items": [
-    {
-      "station_name": "美樂站",
-      "route": "615P",
-      "etas": [
-        {
-          "eta": "2026-09-09T01:31:40+08:00"
-        }
-      ]
-    },
-    {
-      "station_name": "美樂站",
-      "route": "610",
-      "etas": [
-        {
-          "eta": "2026-09-09T01:34:40+08:00"
-        }
-      ]
-    }
-  ]
+  "lr_items": []
 }
