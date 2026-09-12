@@ -1,17 +1,47 @@
 {
-  "timestamp": "2026-09-13T03:18:20.686539+08:00",
+  "timestamp": "2026-09-13T05:29:06.939958+08:00",
   "bus_items": [
     {
       "company": "lrtfeeder",
       "route": "K52",
       "display_name": "蝴蝶邨蝶心樓",
-      "etas": []
+      "etas": [
+        {
+          "eta": "2026-09-13T06:00:08+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        }
+      ]
     },
     {
       "company": "lrtfeeder",
       "route": "506",
       "display_name": "蝴蝶邨蝶心樓",
-      "etas": []
+      "etas": [
+        {
+          "eta": "2026-09-13T05:45:15+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-09-13T05:55:15+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        },
+        {
+          "eta": "2026-09-13T06:05:15+08:00",
+          "remark": {
+            "zh": ""
+          },
+          "co": "lrtfeeder"
+        }
+      ]
     },
     {
       "company": "kmb",
@@ -19,10 +49,10 @@
       "display_name": "湖景邨湖翠樓",
       "etas": [
         {
-          "eta": null,
+          "eta": "2026-09-13T06:10:00+08:00",
           "remark": {
-            "zh": "",
-            "en": ""
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
           },
           "co": "kmb"
         }
@@ -34,10 +64,18 @@
       "display_name": "蝴蝶站",
       "etas": [
         {
-          "eta": null,
+          "eta": "2026-09-13T06:10:00+08:00",
           "remark": {
-            "zh": "",
-            "en": ""
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-09-13T06:25:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
           },
           "co": "kmb"
         }
@@ -49,10 +87,18 @@
       "display_name": "湖景邨湖翠樓",
       "etas": [
         {
-          "eta": null,
+          "eta": "2026-09-13T05:50:00+08:00",
           "remark": {
-            "zh": "",
-            "en": ""
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
+          },
+          "co": "kmb"
+        },
+        {
+          "eta": "2026-09-13T06:20:00+08:00",
+          "remark": {
+            "zh": "原定班次",
+            "en": "Scheduled Bus"
           },
           "co": "kmb"
         }
@@ -62,7 +108,16 @@
       "company": "ctb",
       "route": "962X",
       "display_name": "湖景邨湖畔樓",
-      "etas": []
+      "etas": [
+        {
+          "eta": "2026-09-13T06:05:00+08:00",
+          "remark": {
+            "zh": "",
+            "en": ""
+          },
+          "co": "ctb"
+        }
+      ]
     },
     {
       "company": "lwb",
@@ -89,5 +144,93 @@
       "etas": []
     }
   ],
-  "lr_items": []
+  "lr_items": [
+    {
+      "station_name": "美樂站",
+      "route": "610",
+      "etas": [
+        {
+          "eta": "2026-09-13T05:36:16+08:00"
+        },
+        {
+          "eta": "2026-09-13T05:48:16+08:00"
+        }
+      ]
+    },
+    {
+      "station_name": "美樂站",
+      "route": "615P",
+      "etas": [
+        {
+          "eta": "2026-09-13T05:38:16+08:00"
+        }
+      ]
+    },
+    {
+      "station_name": "美樂站",
+      "route": "615",
+      "etas": [
+        {
+          "eta": "2026-09-13T05:41:16+08:00"
+        }
+      ]
+    },
+    {
+      "station_name": "屯門碼頭站",
+      "route": "507",
+      "etas": [
+        {
+          "eta": "2026-09-13T05:40:17+08:00"
+        }
+      ]
+    },
+    {
+      "station_name": "屯門碼頭站",
+      "route": "615P",
+      "etas": [
+        {
+          "eta": "2026-09-13T05:36:17+08:00"
+        }
+      ]
+    },
+    {
+      "station_name": "屯門碼頭站",
+      "route": "615",
+      "etas": [
+        {
+          "eta": "2026-09-13T05:39:17+08:00"
+        }
+      ]
+    },
+    {
+      "station_name": "屯門碼頭站",
+      "route": "610",
+      "etas": [
+        {
+          "eta": "2026-09-13T05:34:17+08:00"
+        },
+        {
+          "eta": "2026-09-13T05:46:17+08:00"
+        }
+      ]
+    },
+    {
+      "station_name": "屯門碼頭站",
+      "route": "614",
+      "etas": [
+        {
+          "eta": "2026-09-13T05:35:17+08:00"
+        }
+      ]
+    },
+    {
+      "station_name": "屯門碼頭站",
+      "route": "614P",
+      "etas": [
+        {
+          "eta": "2026-09-13T05:38:17+08:00"
+        }
+      ]
+    }
+  ]
 }
